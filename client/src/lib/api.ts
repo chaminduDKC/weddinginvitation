@@ -1,4 +1,5 @@
-import api from './axios';
+import api, { API_BASE_URL } from './axios';
+export { API_BASE_URL };
 import {
   Template,
   Order,

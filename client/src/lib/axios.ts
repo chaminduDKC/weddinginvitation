@@ -1,7 +1,10 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
+// Get API base URL from Vite environment variables (e.g. VITE_API_URL=http://localhost:5000)
+export const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+
 export const api = axios.create({
-  baseURL: '',
+  baseURL: API_BASE_URL,
   withCredentials: true,
 });
 
@@ -74,7 +77,7 @@ api.interceptors.response.use(
       // the browser automatically includes the 'refresh_token' cookie via withCredentials: true.
       // The backend sets new 'access_token' and 'refresh_token' cookies in the response.
       await axios.post(
-        '/api/auth/refresh',
+        `${API_BASE_URL}/api/auth/refresh`,
         {},
         { withCredentials: true }
       );
