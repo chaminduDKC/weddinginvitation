@@ -1,0 +1,144 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id              String         @id @default(cuid())
+  brideName       String
+  groomName       String
+  email           String         @unique
+  phone           String
+  passwordHash    String
+  role            Role           @default(USER)
+  emailVerifiedAt DateTime?
+  isActive        Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  emailOtps     EmailOtp[]
+  refreshTokens RefreshToken[]
+  orders        Order[]
+  invitations   Invitation[]
+  guests        Guest[]
+
+  @@map("users")
+}
+
+model EmailOtp {
+  id        String   @id @default(cuid())
+  userId    String
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("email_otps")
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model Template {
+  id           String   @id @default(cuid())
+  key          String   @unique
+  name         String
+  description  String?
+  priceLkr     Int
+  thumbnailUrl String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  orders      Order[]
+  invitations Invitation[]
+
+  @@map("templates")
+}
+
+model Order {
+  id           String      @id @default(cuid())
+  userId       String
+  templateId   String
+  status       OrderStatus @default(PENDING)
+  slipUrl      String?
+  slipPublicId String?
+  note         String?
+  reviewedAt   DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  template Template @relation(fields: [templateId], references: [id], onDelete: Restrict)
+
+  @@index([userId])
+  @@index([templateId])
+  @@map("orders")
+}
+
+model Invitation {
+  id           String   @id @default(cuid())
+  userId       String
+  templateId   String
+  venue        String
+  eventDate    DateTime
+  heroImageUrl String?
+  galleryImages String[] @default([])
+  storyText    String?
+  mapUrl       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  template Template @relation(fields: [templateId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, templateId])
+  @@map("invitations")
+}
+
+model Guest {
+  id        String    @id @default(cuid())
+  userId    String
+  name      String
+  phone     String
+  token     String    @unique
+  viewedAt  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@map("guests")
+}

@@ -1,0 +1,291 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   DESIGN TOKENS (Defined before building any screen)
+   Strictly restrained palette, high readability, and premium calm aesthetic.
+   ========================================================================== */
+@theme {
+  /* Fonts */
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sinhala: "Abhaya Libre", "Noto Serif Sinhala", "Playfair Display", Georgia, serif;
+
+  /* Custom Colors mapped to Tailwind v4 utilities */
+  --color-sand-50: #faf8f5;
+  --color-sand-100: #f5f0e8;
+  --color-sand-200: #e8ded1;
+  
+  --color-obsidian: #0f172a;
+  --color-charcoal: #1e293b;
+  --color-slate-muted: #64748b;
+  --color-slate-light: #94a3b8;
+  
+  --color-gold-400: #dfb76c;
+  --color-gold-500: #c5a059;
+  --color-gold-600: #a7823f;
+
+  --color-rose-50: #fff1f2;
+  --color-rose-500: #be185d;
+  --color-rose-600: #e11d48;
+
+  --color-emerald-50: #ecfdf5;
+  --color-emerald-600: #059669;
+  --color-emerald-700: #047857;
+
+  --color-amber-50: #fffbeb;
+  --color-amber-500: #f59e0b;
+  --color-amber-600: #d97706;
+
+  --color-surface: #ffffff;
+  --color-border: #e2e8f0;
+}
+
+:root {
+  /* Fluid Typography using clamp() */
+  --text-display: clamp(1.85rem, 5vw + 0.5rem, 3.25rem);
+  --text-h1: clamp(1.4rem, 3.5vw + 0.3rem, 2.25rem);
+  --text-h2: clamp(1.15rem, 2.5vw + 0.2rem, 1.75rem);
+  --text-h3: clamp(1rem, 1.8vw + 0.15rem, 1.35rem);
+  --text-body: clamp(0.875rem, 1.2vw + 0.1rem, 1rem);
+  --text-sm: clamp(0.78rem, 1vw + 0.05rem, 0.875rem);
+  --text-xs: clamp(0.7rem, 0.8vw + 0.05rem, 0.75rem);
+
+  /* Spacing & Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Restrained Crisp Borders */
+  --shadow-crisp: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.08);
+}
+
+/* ==========================================================================
+   PERFORMANCE & MOBILE GUARDRAILS
+   - ZERO blur filters or backdrop blur (cause of previous mobile stutter)
+   - ZERO mix-blend-mode
+   - ZERO animated heavy shadows
+   - Only transform and opacity animations
+   ========================================================================== */
+html {
+  font-family: var(--font-sans);
+  background-color: var(--color-sand-50);
+  color: var(--color-obsidian);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100dvh;
+  background-color: var(--color-sand-50);
+  color: var(--color-obsidian);
+  overflow-x: hidden;
+}
+
+/* Fluid Typography Classes */
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+.font-sinhala {
+  font-family: var(--font-sinhala);
+}
+
+.text-fluid-display {
+  font-size: var(--text-display);
+  line-height: 1.15;
+}
+
+.text-fluid-h1 {
+  font-size: var(--text-h1);
+  line-height: 1.25;
+}
+
+.text-fluid-h2 {
+  font-size: var(--text-h2);
+  line-height: 1.35;
+}
+
+.text-fluid-body {
+  font-size: var(--text-body);
+  line-height: 1.6;
+}
+
+/* Safe-area insets for iPhone / Android notches */
+.pt-safe {
+  padding-top: max(1rem, env(safe-area-inset-top));
+}
+
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+.min-h-screen-dvh {
+  min-height: 100dvh;
+}
+
+.h-screen-dvh {
+  height: 100dvh;
+}
+
+/* Mobile Touch Target Rule: Strictly >= 44px */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Hide scrollbar while preserving scroll functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   SRI LANKAN INVITATION OPENING OVERLAY ANIMATIONS
+   Fast, GPU-accelerated (transform & opacity only)
+   ========================================================================== */
+@keyframes txMandalaRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes txPulseRing {
+  0% {
+    transform: scale(0.96);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 0.25;
+  }
+  100% {
+    transform: scale(1.36);
+    opacity: 0;
+  }
+}
+
+@keyframes txLotusFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.anim-mandala {
+  animation: txMandalaRotate 90s linear infinite;
+  will-change: transform;
+}
+
+.anim-lotus-float {
+  animation: txLotusFloat 4s ease-in-out infinite;
+  will-change: transform;
+}
+
+.anim-btn-pulse {
+  animation: txPulseRing 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+}
+
+/* Golden Light Bloom & Fade for Door / Curtain Opening */
+@keyframes goldLightBloomAndFade {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  22% {
+    opacity: 0.85;
+    transform: scale(1.06);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.22);
+  }
+  78% {
+    opacity: 0.15;
+    transform: scale(1.36);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.48);
+  }
+}
+
+@keyframes goldSeamRay {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.2);
+  }
+  20% {
+    opacity: 0.95;
+    transform: scaleX(3.5);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scaleX(11);
+  }
+  80% {
+    opacity: 0.1;
+    transform: scaleX(18);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(24);
+  }
+}
+
+.anim-gold-light-burst {
+  animation: goldLightBloomAndFade 1.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.anim-gold-seam-ray {
+  animation: goldSeamRay 1.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform, opacity;
+}
+
+/* ==========================================================================
+   SINHALA TYPOGRAPHY STYLES (FM Abhaya, FM Gemunu, Royal Serif, Modern Sans)
+   ========================================================================== */
+.font-sinhala-abhaya {
+  font-family: "Abhaya Libre", "Noto Serif Sinhala", Georgia, serif !important;
+}
+
+.font-sinhala-gemunu {
+  font-family: "Gemunu Libre", "Abhaya Libre", -apple-system, sans-serif !important;
+}
+
+.font-sinhala-noto-serif {
+  font-family: "Noto Serif Sinhala", "Abhaya Libre", Georgia, serif !important;
+}
+
+.font-sinhala-noto-sans {
+  font-family: "Noto Sans Sinhala", -apple-system, sans-serif !important;
+}
+
