@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Heart, User, LogOut, Menu, X, Sparkles, LayoutDashboard, Shield } from 'lucide-react';
+import { Heart, LogOut, Menu, X, Sparkles, LayoutDashboard, Shield } from 'lucide-react';
 import { useAuth } from '../lib/auth';
 
 export const Navbar: React.FC = () => {
@@ -8,11 +8,16 @@ export const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
   const handleLogout = async () => {
+    setSigningOut(true);
+    // Small delay so the animation is visible before navigating away
+    await new Promise((res) => setTimeout(res, 600));
     await logout();
     navigate('/');
     setMobileMenuOpen(false);
+    setSigningOut(false);
   };
 
   const isCurrent = (path: string) => location.pathname === path;
@@ -78,10 +83,15 @@ export const Navbar: React.FC = () => {
                   </span>
                   <button
                     onClick={handleLogout}
-                    className="p-2 text-slate-400 hover:text-rose-600 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    disabled={signingOut}
+                    className={`p-2 rounded-lg transition-all min-h-[44px] min-w-[44px] flex items-center justify-center
+                      ${signingOut
+                        ? 'text-rose-500 bg-rose-50 scale-90'
+                        : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'
+                      }`}
                     aria-label="Logout"
                   >
-                    <LogOut className="h-4 w-4" />
+                    <LogOut className={`h-4 w-4 ${signingOut ? 'animate-spin' : ''}`} />
                   </button>
                 </div>
               </>
@@ -170,10 +180,21 @@ export const Navbar: React.FC = () => {
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="flex w-full items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-rose-600 hover:bg-rose-50 min-h-[44px]"
+                  disabled={signingOut}
+                  className={`relative flex w-full items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium min-h-[44px] overflow-hidden transition-all duration-200
+                    ${signingOut
+                      ? 'bg-rose-50 text-rose-600 scale-[0.97]'
+                      : 'text-rose-600 hover:bg-rose-50 active:scale-[0.97]'
+                    }`}
                 >
-                  <LogOut className="h-4 w-4" />
-                  Sign Out
+                  {/* Ripple background on active */}
+                  {signingOut && (
+                    <span className="absolute inset-0 bg-rose-100 animate-pulse rounded-xl" />
+                  )}
+                  <LogOut className={`relative h-4 w-4 transition-transform ${signingOut ? 'animate-spin' : ''}`} />
+                  <span className="relative">
+                    {signingOut ? 'Signing out…' : 'Sign Out'}
+                  </span>
                 </button>
               </div>
             </>
