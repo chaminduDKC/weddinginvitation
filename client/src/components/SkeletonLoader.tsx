@@ -5,7 +5,7 @@ export const CatalogSkeleton: React.FC = () => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
       {[1, 2, 3].map((i) => (
         <div key={i} className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
-          <div className="h-64 bg-slate-200 w-full" />
+          <div className="h-74 bg-slate-200 w-full" />
           <div className="p-5 space-y-3">
             <div className="h-5 bg-slate-200 rounded-md w-3/4" />
             <div className="h-4 bg-slate-200 rounded-md w-full" />
