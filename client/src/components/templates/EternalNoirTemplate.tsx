@@ -118,6 +118,7 @@ export const EternalNoirTemplate: React.FC<TemplateComponentProps> = ({ data, ha
 
   const bride = data.brideName || '';
   const groom = data.groomName || '';
+  
 
   const itinerary =
     extra.itinerary && extra.itinerary.length > 0 ? extra.itinerary : defaultTimeline(data.eventDate, undefined, data.language);
@@ -239,6 +240,7 @@ export const EternalNoirTemplate: React.FC<TemplateComponentProps> = ({ data, ha
                   <WriteOn block delay={2900} duration={2000}>
                     <span className={`pk-gold-text ${isSi ? 'text-3xl font-serif font-bold' : 'pk-pinyon text-5xl'}`}>{groom}</span>
                   </WriteOn>
+                  
                 </h2>
                 <Typewriter
                   as="p"

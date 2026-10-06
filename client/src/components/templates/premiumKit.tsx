@@ -201,19 +201,22 @@ export const WriteOn: React.FC<{
   className?: string;
   children: React.ReactNode;
 }> = ({ active = true, delay = 0, duration = 2000, block = false, className = '', children }) => {
-  const [ref, inView] = useInView<HTMLSpanElement>({ threshold: 0.3 });
+  // The observed wrapper is never clipped; only the inner span is. Observing a
+  // zero-width clipped element can leave the observer from ever firing.
+  const [ref, inView] = useInView<HTMLSpanElement>({ threshold: 0.1 });
   const reduced = usePrefersReducedMotion();
   const on = (active && inView) || reduced;
   return (
-    <span
-      ref={ref}
-      className={`${block ? 'block' : 'inline-block'} ${className}`}
-      style={{
-        clipPath: on ? 'inset(-30% -8% -30% -8%)' : 'inset(-30% 108% -30% -8%)',
-        transition: reduced ? 'none' : `clip-path ${duration}ms cubic-bezier(.65,.05,.25,1) ${delay}ms`,
-      }}
-    >
-      {children}
+    <span ref={ref} className={`${block ? 'block' : 'inline-block'} ${className}`}>
+      <span
+        className="block"
+        style={{
+          clipPath: on ? 'inset(-30% -8% -30% -8%)' : 'inset(-30% 108% -30% -8%)',
+          transition: reduced ? 'none' : `clip-path ${duration}ms cubic-bezier(.65,.05,.25,1) ${delay}ms`,
+        }}
+      >
+        {children}
+      </span>
     </span>
   );
 };
