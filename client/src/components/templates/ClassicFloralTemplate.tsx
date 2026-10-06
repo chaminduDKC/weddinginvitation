@@ -127,15 +127,7 @@ export const ClassicFloralTemplate: React.FC<TemplateComponentProps> = ({ data, 
       {/* MAIN CONTENT */}
       <main className="max-w-xl mx-auto px-5 sm:px-8 py-16 sm:py-20 space-y-14">
         {/* Tier Badge */}
-        <div className="text-center">
-          <span
-            className={`inline-block px-3 py-1 text-[10px] uppercase tracking-widest font-semibold bg-[#B76E79]/10 text-[#B76E79] rounded-full border border-[#B76E79]/20 ${
-              isSi ? 'font-sinhala' : ''
-            }`}
-          >
-            {isSi ? 'රොමෑන්ටික් මල් සැරසිලි තේමාව • Classic Floral' : 'Deluxe Romance Tier • Classic Floral'}
-          </span>
-        </div>
+       
 
         {/* HERO SECTION */}
         <section className="text-center space-y-5">

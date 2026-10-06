@@ -279,11 +279,7 @@ export const EternalNoirTemplate: React.FC<TemplateComponentProps> = ({ data, ha
       {/* MAIN CONTENT */}
       <main className="relative z-10 max-w-xl mx-auto px-4 sm:px-6 py-16 sm:py-20 space-y-14">
         {/* Tier Badge */}
-        <div className="text-center">
-          <span className="inline-block px-3.5 py-1 text-[10px] uppercase tracking-widest font-bold bg-gold-500/20 text-gold-300 rounded-full border border-gold-400/40 shadow-xs">
-            {isSi ? 'රාජකීය අතිවිශිෂ්ට මංගල ආරාධනය • Eternal Noir' : 'Ultra-Luxury Editorial Tier • Eternal Noir'}
-          </span>
-        </div>
+       
 
         {/* HERO SECTION — choreographed after the curtain parts */}
         <section className="relative flex flex-col items-center justify-center text-center text-white py-12 space-y-7">

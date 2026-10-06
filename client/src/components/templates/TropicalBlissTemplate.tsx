@@ -129,15 +129,7 @@ export const TropicalBlissTemplate: React.FC<TemplateComponentProps> = ({ data, 
       {/* MAIN CONTENT */}
       <main className="max-w-xl mx-auto px-5 sm:px-8 py-16 sm:py-20 space-y-12">
         {/* Tier Badge */}
-        <div className="text-center">
-          <span
-            className={`inline-block px-3 py-1 text-[10px] uppercase tracking-widest font-semibold bg-emerald-900/10 text-[#0C3826] rounded-full border border-emerald-900/20 ${
-              isSi ? 'font-sinhala' : ''
-            }`}
-          >
-            {isSi ? 'දූපත් සුන්දරත්වය තේමාව • Tropical Bliss' : 'Standard Destination Tier • Tropical Bliss'}
-          </span>
-        </div>
+       
 
         {/* HERO SECTION */}
         <section className="text-center space-y-6">

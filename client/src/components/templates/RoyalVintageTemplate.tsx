@@ -156,15 +156,7 @@ export const RoyalVintageTemplate: React.FC<TemplateComponentProps> = ({ data, h
       {/* MAIN CONTENT */}
       <main className="max-w-xl mx-auto px-5 sm:px-8 py-16 sm:py-20 space-y-14">
         {/* Tier Badge */}
-        <div className="text-center">
-          <span
-            className={`inline-block px-3 py-1 text-[10px] uppercase tracking-widest font-bold bg-[#D4AF37]/20 text-[#D4AF37] rounded-full border border-[#D4AF37]/40 shadow-xs ${
-              isSi ? 'font-sinhala' : ''
-            }`}
-          >
-            {isSi ? 'රාජකීය අභිමානවත් තේමාව • Royal Vintage' : 'Premium Royal Tier • Royal Vintage'}
-          </span>
-        </div>
+       
 
         {/* HERO SECTION */}
         <section className="relative text-center space-y-6">
