@@ -308,7 +308,7 @@ export const RoyalVintageTemplate: React.FC<TemplateComponentProps> = ({ data, h
                 { l: i18n.parentsOfGroom, v: entourage.parentsOfGroom },
                 { l: i18n.maidOfHonor, v: entourage.maidOfHonor },
                 { l: i18n.bestMan, v: entourage.bestMan },
-              ].map((p, i) => (
+              ].map((p:any, i) => (
                 <div key={p.l} className="p-4 rounded-2xl bg-[#0B132B]/80 border border-[#D4AF37]/20 space-y-1">
                   <span className={`block text-[#D4AF37] font-bold ${isSi ? 'font-sinhala text-xs' : 'pk-caps text-[9px]'}`}>{p.l}</span>
                   <Typewriter
