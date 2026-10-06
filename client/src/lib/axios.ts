@@ -1,10 +1,10 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
 // Get API base URL from Vite environment variables (e.g. VITE_API_URL=http://localhost:5000)
-export const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+export const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://192.168.8.100:5000').replace(/\/+$/, '');
 
 export const api = axios.create({
-  baseURL: 'http://192.168.8.100:5000',
+  baseURL: API_BASE_URL,
   withCredentials: true,
 });
 
