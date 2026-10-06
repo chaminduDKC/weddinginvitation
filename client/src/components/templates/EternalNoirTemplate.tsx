@@ -20,7 +20,7 @@ import {
   Curtain,
   GlitterField,
   PremiumStyles,
-  Rise,
+  Rise as BaseRise,
   SplitWords,
   Tick,
   Tilt,
@@ -31,6 +31,9 @@ import {
 import { getInvitationI18n, formatWeddingDate } from '../../lib/invitationI18n';
 
 const fill = (c: string) => ({ '--pk-fill': c } as React.CSSProperties);
+
+// Noir-only: drop the leftover blur(0px) filter once an entrance has finished
+const Rise: React.FC<React.ComponentProps<typeof BaseRise>> = (props) => <BaseRise settle {...props} />;
 
 const Lotus: React.FC<{ className?: string }> = ({ className = '' }) => (
   <svg viewBox="-45 -42 90 46" className={`lotus ${className}`} fill="none" aria-hidden="true">
@@ -91,6 +94,33 @@ const LotusDivider: React.FC<{ light?: boolean }> = ({ light = false }) => (
   </div>
 );
 
+type CountdownDate = Parameters<typeof useCountdown>[0];
+
+// Ticks every second on its own, so the rest of the page no longer re-renders each second
+const NoirCountdown = React.memo(function NoirCountdown({
+  eventDate, isSi, days, hours, minutes, seconds,
+}: { eventDate: CountdownDate; isSi: boolean; days: string; hours: string; minutes: string; seconds: string }) {
+  const t = useCountdown(eventDate, true);
+  const items = [
+    { v: t.days, l: days },
+    { v: t.hours, l: hours },
+    { v: t.minutes, l: minutes },
+    { v: t.seconds, l: seconds },
+  ];
+  return (
+    <div className="mx-auto grid max-w-sm grid-cols-4 divide-x divide-gold-400/30">
+      {items.map((it) => (
+        <div key={it.l} className="px-2">
+          <span className={`block text-3xl sm:text-4xl font-bold leading-none tabular-nums text-white ${isSi ? 'font-serif' : 'pk-serif'}`}>
+            <Tick value={it.v} />
+          </span>
+          <span className={`block pt-2 text-[11px] text-slate-300 ${isSi ? 'font-sinhala' : ''}`}>{it.l}</span>
+        </div>
+      ))}
+    </div>
+  );
+});
+
 /**
  * ULTRA-LUXURY TIER — Eternal Noir  (premium level 4)
  * Everything in Premium, plus: cinematic Ken Burns backdrop, scroll parallax on
@@ -109,16 +139,16 @@ export const EternalNoirTemplate: React.FC<TemplateComponentProps> = ({ data, ha
 
   const { weekday, dayNumber, monthYear, formattedTime } = formatWeddingDate(data.eventDate, data.language);
 
-  const timeLeft = useCountdown(data.eventDate, true);
   const [lightbox, setLightbox] = useState<number | null>(null);
   const [rsvpInView, setRsvpInView] = useState(false);
   const archRef = useRef<HTMLDivElement>(null);
   const spotRef = useRef<HTMLDivElement>(null);
+  const spotRaf = useRef(0);
+  const rootRef = useRef<HTMLDivElement>(null);
   const [tlRef, tlIn] = useInView<HTMLOListElement>({ threshold: 0.15 });
 
   const bride = data.brideName || '';
   const groom = data.groomName || '';
-  
 
   const itinerary =
     extra.itinerary && extra.itinerary.length > 0 ? extra.itinerary : defaultTimeline(data.eventDate, undefined, data.language);
@@ -164,8 +194,29 @@ export const EternalNoirTemplate: React.FC<TemplateComponentProps> = ({ data, ha
   // Soft gold spotlight that follows the cursor (desktop only)
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (reduced || e.pointerType === 'touch' || !spotRef.current) return;
-    spotRef.current.style.background = `radial-gradient(420px circle at ${e.clientX}px ${e.clientY}px, rgba(212,175,55,0.13), transparent 65%)`;
+    const { clientX: x, clientY: y } = e;
+    cancelAnimationFrame(spotRaf.current);
+    spotRaf.current = requestAnimationFrame(() => {
+      if (spotRef.current) spotRef.current.style.transform = `translate3d(${x - 300}px, ${y - 300}px, 0)`;
+    });
   };
+
+  // Pause the endless CSS animations (orbit borders, sheen, gold shimmer) while they're off-screen
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || reduced || typeof IntersectionObserver === 'undefined') return;
+    const els = root.querySelectorAll<HTMLElement>('.pk-orbit, .pk-sheen, .pk-gold-text');
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((en) => en.target.classList.toggle('nr-paused', !en.isIntersecting)),
+      { rootMargin: '80px' }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => {
+      io.disconnect();
+      els.forEach((el) => el.classList.remove('nr-paused'));
+      cancelAnimationFrame(spotRaf.current);
+    };
+  }, [hasOpened, reduced, data.storyText, extra.giftNote]);
 
   const focus =
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian';
@@ -174,15 +225,9 @@ export const EternalNoirTemplate: React.FC<TemplateComponentProps> = ({ data, ha
   const heading = (c = '') => `${isSi ? 'font-sinhala text-2xl font-bold' : 'pk-pinyon text-5xl sm:text-6xl'} ${c}`;
   const nameCls = isSi ? 'text-4xl font-serif font-bold' : 'pk-pinyon text-6xl sm:text-7xl';
 
-  const countdownItems = [
-    { v: timeLeft.days, l: i18n.days },
-    { v: timeLeft.hours, l: i18n.hours },
-    { v: timeLeft.minutes, l: i18n.minutes },
-    { v: timeLeft.seconds, l: i18n.seconds },
-  ];
-
   return (
     <div
+      ref={rootRef}
       onPointerMove={onPointerMove}
       className={`min-h-screen-dvh bg-sand-50 text-obsidian antialiased overflow-x-hidden selection:bg-gold-500 selection:text-obsidian ${
         isSi ? `font-sans ${getSinhalaFontClass(data.fontStyle)}` : 'pk-body'
@@ -190,11 +235,17 @@ export const EternalNoirTemplate: React.FC<TemplateComponentProps> = ({ data, ha
     >
       <TemplateStyles />
       <PremiumStyles />
+      <style>{'.nr-paused,.nr-paused::after{animation-play-state:paused!important}'}</style>
       <ScrollProgress className="bg-gradient-to-r from-gold-600 via-gold-400 to-gold-600" />
-      {hasOpened && <FallingParticles kind="gold" count={26} />}
+      {hasOpened && <FallingParticles kind="gold" count={16} />}
       <Lightbox images={gallery} index={lightbox} onChange={setLightbox} />
       <Curtain show={hasOpened} />
-      <div ref={spotRef} aria-hidden="true" className="pointer-events-none fixed inset-0 z-[5]" />
+      <div
+        ref={spotRef}
+        aria-hidden="true"
+        className="pointer-events-none fixed left-0 top-0 z-[5] h-[600px] w-[600px] will-change-transform"
+        style={{ transform: 'translate3d(-2000px,-2000px,0)', background: 'radial-gradient(circle, rgba(212,175,55,0.13), transparent 65%)' }}
+      />
 
       {/* FIXED LUXURY EDITORIAL BACKGROUND (slow cinematic push-in + drifting aurora) */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
@@ -207,16 +258,16 @@ export const EternalNoirTemplate: React.FC<TemplateComponentProps> = ({ data, ha
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/65 to-black/95" />
-        <div className="pk-aurora absolute inset-0 mix-blend-screen">
-          <i style={{ left: '-10%', top: '8%', width: '45vw', height: '45vw', background: '#D4AF37' }} />
-          <i style={{ right: '-15%', top: '55%', width: '50vw', height: '50vw', background: '#8a6a1f', animationDelay: '-7s' }} />
+        <div className="pk-aurora absolute inset-0">
+          <i style={{ left: '-10%', top: '8%', width: '45vw', height: '45vw', filter: 'none', opacity: 0.5, willChange: 'transform', background: 'radial-gradient(circle, rgba(212,175,55,0.45), transparent 65%)' }} />
+          <i style={{ right: '-15%', top: '55%', width: '50vw', height: '50vw', filter: 'none', opacity: 0.5, willChange: 'transform', animationDelay: '-7s', background: 'radial-gradient(circle, rgba(138,106,31,0.5), transparent 65%)' }} />
         </div>
       </div>
 
       {/* INTRO SEAL OVERLAY */}
       {!hasOpened && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-obsidian text-white">
-          <GlitterField count={90} seed={101} />
+          <GlitterField count={40} seed={101} glow={false} />
           <div className="relative w-full max-w-sm px-8 py-14 text-center">
             <InsetFrame radius="rounded-3xl" />
 
@@ -240,7 +291,6 @@ export const EternalNoirTemplate: React.FC<TemplateComponentProps> = ({ data, ha
                   <WriteOn block delay={2900} duration={2000}>
                     <span className={`pk-gold-text ${isSi ? 'text-3xl font-serif font-bold' : 'pk-pinyon text-5xl'}`}>{groom}</span>
                   </WriteOn>
-                  
                 </h2>
                 <Typewriter
                   as="p"
@@ -280,12 +330,9 @@ export const EternalNoirTemplate: React.FC<TemplateComponentProps> = ({ data, ha
 
       {/* MAIN CONTENT */}
       <main className="relative z-10 max-w-xl mx-auto px-4 sm:px-6 py-16 sm:py-20 space-y-14">
-        {/* Tier Badge */}
-       
-
         {/* HERO SECTION — choreographed after the curtain parts */}
         <section className="relative flex flex-col items-center justify-center text-center text-white py-12 space-y-7">
-          <GlitterField count={70} seed={202} className="-mx-6" />
+          <GlitterField count={32} seed={202} glow={false} className="-mx-6" />
 
           <Typewriter
             as="p"
@@ -294,7 +341,7 @@ export const EternalNoirTemplate: React.FC<TemplateComponentProps> = ({ data, ha
             active={hasOpened}
             delay={1300}
             speed={42}
-            className={`relative text-gold-400 max-w-xs ${isSi ? 'font-sinhala text-sm' : 'pk-caps text-[10px] sm:text-xs leading-relaxed'}`}
+            className={`relative text-gold-400 mb-10 max-w-xs ${isSi ? 'font-sinhala text-sm' : 'pk-caps text-[10px] sm:text-xs leading-relaxed'}`}
           />
 
           <Rise active={hasOpened} delay={1800} y={40} className="relative w-60 sm:w-64">
@@ -317,7 +364,7 @@ export const EternalNoirTemplate: React.FC<TemplateComponentProps> = ({ data, ha
             </div>
           </Rise>
 
-          <h1 className="relative leading-tight drop-shadow-md">
+          <h1 className="relative leading-tight">
             <WriteOn block active={hasOpened} delay={2800} duration={2400}>
               <span className={`pk-gold-text ${nameCls}`}>{bride}</span>
             </WriteOn>
@@ -352,7 +399,7 @@ export const EternalNoirTemplate: React.FC<TemplateComponentProps> = ({ data, ha
         <Reveal>
           <section className="pk-orbit pk-sheen relative rounded-3xl px-6 sm:px-10 py-14 shadow-card text-center text-obsidian" style={fill('#ffffff')}>
             <InsetFrame radius="rounded-2xl" />
-            <GlitterField count={24} seed={303} bias="top" />
+            <GlitterField count={12} seed={303} bias="top" glow={false} />
 
             <div className="relative space-y-8">
               <div className="space-y-3">
@@ -455,7 +502,7 @@ export const EternalNoirTemplate: React.FC<TemplateComponentProps> = ({ data, ha
         {/* DRESS CODE CARD */}
         <Reveal>
           <section className="relative bg-obsidian/90 text-white rounded-3xl p-6 sm:p-8 text-center border border-gold-400/30 space-y-3 shadow-lg overflow-hidden">
-            <GlitterField count={30} seed={404} />
+            <GlitterField count={14} seed={404} glow={false} />
             <div className="relative w-10 h-10 rounded-full bg-gold-500/20 flex items-center justify-center mx-auto text-gold-400">
               <Shirt className="h-5 w-5" />
             </div>
@@ -474,16 +521,14 @@ export const EternalNoirTemplate: React.FC<TemplateComponentProps> = ({ data, ha
         <Reveal>
           <section className="py-8 text-center text-white space-y-6">
             <p className={`text-gold-400 ${isSi ? 'font-sinhala' : 'pk-serif italic text-xl'}`}>{i18n.countdownPrefix}</p>
-            <div className="mx-auto grid max-w-sm grid-cols-4 divide-x divide-gold-400/30">
-              {countdownItems.map((t) => (
-                <div key={t.l} className="px-2">
-                  <span className={`block text-3xl sm:text-4xl font-bold leading-none tabular-nums text-white ${isSi ? 'font-serif' : 'pk-serif'}`}>
-                    <Tick value={t.v} />
-                  </span>
-                  <span className={`block pt-2 text-[11px] text-slate-300 ${isSi ? 'font-sinhala' : ''}`}>{t.l}</span>
-                </div>
-              ))}
-            </div>
+            <NoirCountdown
+              eventDate={data.eventDate}
+              isSi={isSi}
+              days={i18n.days}
+              hours={i18n.hours}
+              minutes={i18n.minutes}
+              seconds={i18n.seconds}
+            />
           </section>
         </Reveal>
 

@@ -1,7 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { prisma } from "../../lib/prisma.js";
 import { sendSuccess, sendError } from "../../lib/response.js";
-import { generateSignedSlipUrl, uploadPublicImageToCloudinary } from "../../lib/cloudinary.js";
+import {
+  generateSignedSlipUrl,
+  uploadPublicImageToCloudinary,
+  deleteCloudinaryImage,
+} from "../../lib/cloudinary.js";
 import {
   ReviewOrderInput,
   ToggleUserStatusInput,
@@ -301,6 +305,8 @@ export const updateTemplate = async (
       return;
     }
 
+    const oldThumbnailUrl = existing.thumbnailUrl;
+
     const updated = await prisma.template.update({
       where: { id },
       data: {
@@ -311,6 +317,15 @@ export const updateTemplate = async (
         ...(isActive !== undefined && { isActive }),
       },
     });
+
+    // If thumbnail was changed to a different value, delete the old image from Cloudinary
+    if (
+      thumbnailUrl !== undefined &&
+      oldThumbnailUrl &&
+      thumbnailUrl !== oldThumbnailUrl
+    ) {
+      await deleteCloudinaryImage(oldThumbnailUrl);
+    }
 
     sendSuccess(res, {
       message: "Template updated successfully",
@@ -347,6 +362,8 @@ export const uploadTemplateThumbnail = async (
       return;
     }
 
+    const oldThumbnailUrl = existing.thumbnailUrl;
+
     const uploadResult = await uploadPublicImageToCloudinary(
       file.buffer,
       file.mimetype,
@@ -359,6 +376,11 @@ export const uploadTemplateThumbnail = async (
         thumbnailUrl: uploadResult.secureUrl,
       },
     });
+
+    // Delete old thumbnail from Cloudinary if it exists and differs from the newly uploaded one
+    if (oldThumbnailUrl && oldThumbnailUrl !== uploadResult.secureUrl) {
+      await deleteCloudinaryImage(oldThumbnailUrl);
+    }
 
     sendSuccess(res, {
       message: "Template thumbnail updated successfully",

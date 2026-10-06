@@ -63,37 +63,37 @@ export const DEFAULT_MOMENTS_PRESETS = [
     id: 'first-dance',
     label: 'First Dance',
     labelSi: 'පළමු නැටුම',
-    url: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=85',
+    url: 'https://images.unsplash.com/photo-1617376431454-8195cf1fd668?auto=format&fit=crop&w=800&q=85',
   },
   {
     id: 'garden-romance',
     label: 'Garden Romance',
     labelSi: 'උද්‍යාන ප්‍රේමය',
-    url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=85',
+    url: 'https://images.unsplash.com/photo-1627964464837-6328f5931576?auto=format&fit=crop&w=800&q=85',
   },
   {
     id: 'sunset-beach',
     label: 'Sunset Beach',
     labelSi: 'වෙරළේ සැඳෑව',
-    url: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=800&q=85',
+    url: 'https://images.unsplash.com/photo-1720960531459-f94a5b5ba17f?auto=format&fit=crop&w=800&q=85',
   },
   {
     id: 'regal-arch',
     label: 'Floral Nuptial Arch',
     labelSi: 'මල් වියන යට',
-    url: 'https://images.unsplash.com/photo-1545232979-fbf68fe9f1f8?auto=format&fit=crop&w=800&q=85',
+    url: 'https://images.unsplash.com/photo-1760172551854-3ef5e0bf186d?auto=format&fit=crop&w=800&q=85',
   },
   {
     id: 'golden-hour',
     label: 'Golden Hour Silhouette',
     labelSi: 'රන්වන් සැඳෑ සේයාව',
-    url: 'https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=800&q=85',
+    url: 'https://images.unsplash.com/photo-1688422763790-93430fabf0de?auto=format&fit=crop&w=800&q=85',
   },
   {
     id: 'candlelit-night',
     label: 'Candlelit Evening',
     labelSi: 'පහන් ආලෝකය',
-    url: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=85',
+    url: 'https://images.unsplash.com/photo-1618566864264-fb013f791da4?auto=format&fit=crop&w=800&q=85',
   },
 ];
 

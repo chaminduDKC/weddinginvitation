@@ -129,3 +129,87 @@ export const uploadPublicImageToCloudinary = async (
     uploadStream.end(fileBuffer);
   });
 };
+
+/**
+ * Extract public_id from a Cloudinary URL (e.g. template thumbnails).
+ * Works for standard Cloudinary URLs with folders, transformations, and versions.
+ */
+export const extractCloudinaryPublicId = (url: string): string | null => {
+  if (!url || typeof url !== "string") return null;
+  if (!url.includes("res.cloudinary.com")) return null;
+
+  try {
+    const parsed = new URL(url);
+    const pathname = parsed.pathname;
+    const uploadIndex = pathname.indexOf("/upload/");
+    if (uploadIndex === -1) return null;
+
+    const afterUpload = pathname.substring(uploadIndex + "/upload/".length);
+    const segments = afterUpload.split("/");
+
+    while (segments.length > 0) {
+      const seg = segments[0];
+      if (!seg) break;
+      // Version segment: v followed by digits
+      if (/^v\d+$/.test(seg)) {
+        segments.shift();
+        break;
+      }
+      // Transformation segments (contains commas or standard prefixes like c_, w_, h_)
+      if (seg.includes(",") || /^[a-z]{1,3}_/.test(seg)) {
+        segments.shift();
+        continue;
+      }
+      break;
+    }
+
+    if (segments.length === 0) return null;
+
+    const fullPublicIdWithExt = decodeURIComponent(segments.join("/"));
+    const lastDotIndex = fullPublicIdWithExt.lastIndexOf(".");
+    if (lastDotIndex === -1) return fullPublicIdWithExt;
+    return fullPublicIdWithExt.substring(0, lastDotIndex);
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Delete a public image asset from Cloudinary (e.g. old template thumbnail).
+ * Safely handles external non-Cloudinary URLs, dev mocks, and Cloudinary errors.
+ */
+export const deleteCloudinaryImage = async (urlOrPublicId: string): Promise<boolean> => {
+  if (!urlOrPublicId || typeof urlOrPublicId !== "string") {
+    return false;
+  }
+
+  // If Cloudinary is not configured in dev, mock deletion
+  if (!env.CLOUDINARY_CLOUD_NAME || !env.CLOUDINARY_API_KEY || !env.CLOUDINARY_API_SECRET) {
+    console.log(`ℹ️ [Dev Mock] Deleting old image asset: ${urlOrPublicId.slice(0, 60)}...`);
+    return true;
+  }
+
+  // If it's a URL, extract publicId
+  const publicId = urlOrPublicId.includes("res.cloudinary.com")
+    ? extractCloudinaryPublicId(urlOrPublicId)
+    : urlOrPublicId.startsWith("http") || urlOrPublicId.startsWith("data:")
+    ? null
+    : urlOrPublicId;
+
+  if (!publicId) {
+    // Not a Cloudinary resource (e.g. Unsplash, data URI, placeholder)
+    return false;
+  }
+
+  try {
+    const result = await cloudinary.uploader.destroy(publicId, {
+      resource_type: "image",
+      invalidate: true,
+    });
+    console.log(`🗑️ Cloudinary image deleted successfully: "${publicId}" (result: ${result.result})`);
+    return result.result === "ok";
+  } catch (error) {
+    console.error(`⚠️ Failed to delete Cloudinary image ("${publicId}"):`, error);
+    return false;
+  }
+};

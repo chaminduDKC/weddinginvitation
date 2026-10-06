@@ -14,6 +14,7 @@ export default defineConfig({
     },
   },
   server: {
+    host: true,      // bind to 0.0.0.0 → accessible from mobile on same Wi-Fi
     port: 5174,
     proxy: {
       '/api': {

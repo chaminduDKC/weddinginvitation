@@ -228,9 +228,10 @@ export const Rise: React.FC<{
   delay?: number;
   y?: number;
   blur?: boolean;
+  settle?: boolean;
   className?: string;
   children: React.ReactNode;
-}> = ({ as = 'div', active = true, delay = 0, y = 24, blur = true, className = '', children }) => {
+}> = ({ as = 'div', active = true, delay = 0, y = 24, blur = true, settle = false, className = '', children }) => {
   const Tag = as as React.ElementType;
   const [ref, inView] = useInView<HTMLElement>({ threshold: 0.15 });
   const reduced = usePrefersReducedMotion();
@@ -242,7 +243,7 @@ export const Rise: React.FC<{
       style={{
         opacity: on ? 1 : 0,
         transform: on ? 'none' : `translateY(${y}px)`,
-        filter: blur ? (on ? 'blur(0px)' : 'blur(6px)') : undefined,
+        filter: blur ? (on ? (settle ? 'none' : 'blur(0px)') : 'blur(6px)') : undefined,
         transition: reduced
           ? 'none'
           : `opacity 900ms ease ${delay}ms, transform 900ms cubic-bezier(.2,.7,.2,1) ${delay}ms, filter 900ms ease ${delay}ms`,
@@ -303,8 +304,9 @@ export const GlitterField: React.FC<{
   seed?: number;
   color?: string;
   bias?: 'top' | 'even';
+  glow?: boolean;
   className?: string;
-}> = ({ count = 40, seed = 7, color = '#e8c871', bias = 'top', className = '' }) => {
+}> = ({ count = 40, seed = 7, color = '#e8c871', bias = 'top', glow = true, className = '' }) => {
   const dots = useMemo(() => {
     const r = rng(seed);
     return Array.from({ length: count }, () => ({
@@ -328,7 +330,7 @@ export const GlitterField: React.FC<{
             width: d.s,
             height: d.s,
             background: color,
-            boxShadow: `0 0 ${d.s * 3}px ${color}`,
+            boxShadow: glow ? `0 0 ${d.s * 3}px ${color}` : undefined,
             animationDuration: `${d.d}s`,
             animationDelay: `${d.dl}s`,
           }}
