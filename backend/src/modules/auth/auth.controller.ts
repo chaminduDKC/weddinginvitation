@@ -42,10 +42,10 @@ export const register = async (
     });
 
     if (existingUser) {
-      sendError(res, "An account with this email already exists", 400, "EMAIL_EXISTS");
+      sendError(res, "An account with this email already exists", 409, "EMAIL_EXISTS");
       return;
     }
-
+    
     const passwordHash = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({
@@ -90,6 +90,8 @@ export const register = async (
       201
     );
   } catch (error) {
+    console.log(error);
+    
     next(error);
   }
 };
@@ -314,7 +316,6 @@ export const login = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  console.log("Log from br");
   
   try {
     const { email, password } = req.body;

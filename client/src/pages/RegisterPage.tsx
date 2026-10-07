@@ -97,30 +97,43 @@ export const RegisterPage: React.FC = () => {
   };
 
   const handleFinalSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const fullResult = registerSchema.safeParse(formData);
-    if (!fullResult.success) {
-      const fieldErrors: Partial<Record<keyof FormData, string>> = {};
-      fullResult.error.errors.forEach((err) => {
-        if (err.path[0]) fieldErrors[err.path[0] as keyof FormData] = err.message;
-      });
-      setErrors(fieldErrors);
-      return;
+  e.preventDefault();
+
+  const fullResult = registerSchema.safeParse(formData);
+  if (!fullResult.success) {
+    const fieldErrors: Partial<Record<keyof FormData, string>> = {};
+    fullResult.error.errors.forEach((err) => {
+      if (err.path[0]) fieldErrors[err.path[0] as keyof FormData] = err.message;
+    });
+    setErrors(fieldErrors);
+    return;
+  }
+
+  setLoading(true);
+  setGeneralError('');
+
+  try {
+    await register(formData);
+    navigate(`/verify-otp?email=${encodeURIComponent(formData.email)}`);
+  } catch (err: any) {
+    const status = err.response?.status ?? err.status;
+    const data = err.response?.data;
+
+    // Backend message, whatever field it uses (never axios's default err.message)
+    const serverMessage =
+      typeof data === 'string'
+        ? data
+        : data?.message ?? data?.error ?? data?.detail;
+
+    if (status === 409) {
+      setGeneralError('An account with this email already exists. Please log in.');
+    } else {
+      setGeneralError(serverMessage || 'Registration failed. Please check your details.');
     }
-
-    setLoading(true);
-    setGeneralError('');
-
-    try {
-      await register(formData);
-      navigate(`/verify-otp?email=${encodeURIComponent(formData.email)}`);
-    } catch (err: any) {
-      setGeneralError(err.message || 'Registration failed. Please check your details.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  } finally {
+    setLoading(false);
+  }
+};
   const steps = [
     { id: 1, label: 'The Couple' },
     { id: 2, label: 'Security' },
