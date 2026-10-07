@@ -34,7 +34,13 @@ export const createApp = (): Express => {
     cors({
       origin: (origin, callback) => {
         // Allow requests with no origin (like mobile apps, curl, server-to-server)
-        if (!origin || allowedOrigins.includes(origin) || origin.startsWith("http://localhost:") || origin.startsWith("http://192.168.8.101")) {
+        if (
+          !origin ||
+          allowedOrigins.includes(origin) ||
+          origin.startsWith("http://localhost:") ||
+          origin.startsWith("http://127.0.0.1:") ||
+          origin.startsWith("http://192.168.")
+        ) {
           callback(null, true);
         } else {
           callback(null, true); // Permissive in development

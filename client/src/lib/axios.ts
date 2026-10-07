@@ -1,20 +1,26 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
-// Get API base URL from Vite environment variables (e.g. VITE_API_URL=http://localhost:5000)
-export const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://192.168.8.100:5000').replace(/\/+$/, '');
+// In development, use relative URL '' so requests route through Vite's same-origin proxy (works for localhost and mobile)
+// In production, use VITE_API_URL
+export const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://192.168.8.100:5000"
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
 });
+console.log(API_BASE_URL);
+console.log(API_BASE_URL);
 
-// Purge any legacy tokens from localStorage to prevent insecure storage
-if (typeof window !== 'undefined') {
-  try {
-    localStorage.removeItem('wedding_client_access_token');
-    localStorage.removeItem('wedding_client_refresh_token');
-  } catch {}
-}
+// Attach bearer token if present (works alongside httpOnly cookies as resilient fallback)
+api.interceptors.request.use((config) => {
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('wedding_client_access_token');
+    if (token && !config.headers.Authorization) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
 
 // Mutex and Queue state for handling concurrent 401s during token refresh
 let isRefreshing = false;
@@ -76,11 +82,15 @@ api.interceptors.response.use(
       // Trigger token refresh. Since tokens are stored in secure httpOnly cookies,
       // the browser automatically includes the 'refresh_token' cookie via withCredentials: true.
       // The backend sets new 'access_token' and 'refresh_token' cookies in the response.
-      await axios.post(
+      const refreshRes = await axios.post(
         `${API_BASE_URL}/api/auth/refresh`,
         {},
         { withCredentials: true }
       );
+
+      if (refreshRes.data?.data?.accessToken && typeof window !== 'undefined') {
+        localStorage.setItem('wedding_client_access_token', refreshRes.data.data.accessToken);
+      }
 
       // Successfully refreshed cookies. Resolve all queued requests (they retry with new cookies).
       processQueue(null);
@@ -95,6 +105,7 @@ api.interceptors.response.use(
       if (typeof window !== 'undefined') {
         try {
           localStorage.removeItem('wedding_client_user');
+          localStorage.removeItem('wedding_client_access_token');
           window.dispatchEvent(new CustomEvent('auth:session-expired'));
         } catch {}
       }

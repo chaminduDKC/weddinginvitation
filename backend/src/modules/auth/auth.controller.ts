@@ -314,6 +314,8 @@ export const login = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
+  console.log("Log from br");
+  
   try {
     const { email, password } = req.body;
 

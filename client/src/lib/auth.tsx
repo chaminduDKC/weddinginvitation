@@ -59,6 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(null);
         try {
           localStorage.removeItem('wedding_client_user');
+          localStorage.removeItem('wedding_client_access_token');
         } catch {}
       } finally {
         setIsLoading(false);
@@ -74,6 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(null);
       try {
         localStorage.removeItem('wedding_client_user');
+        localStorage.removeItem('wedding_client_access_token');
       } catch {}
     };
 
@@ -82,8 +84,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (email: string, password: string) => {
+    console.log("Log from f");
+    
     try {
-      const { data } = await api.post<ApiResponse<{ user: User }>>('/api/auth/login', {
+      
+      const { data } = await api.post<ApiResponse<{ user: User; accessToken?: string }>>('/api/auth/login', {
         email,
         password,
       });
@@ -92,6 +97,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(data.data.user);
         try {
           localStorage.setItem('wedding_client_user', JSON.stringify(data.data.user));
+          if (data.data.accessToken) {
+            localStorage.setItem('wedding_client_access_token', data.data.accessToken);
+          }
         } catch {}
         return { success: true };
       }
@@ -113,7 +121,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const verifyOtp = async (email: string, otp: string) => {
-    const { data } = await api.post<ApiResponse<{ user: User }>>('/api/auth/verify-otp', {
+    const { data } = await api.post<ApiResponse<{ user: User; accessToken?: string }>>('/api/auth/verify-otp', {
       email,
       otp,
     });
@@ -122,6 +130,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(data.data.user);
       try {
         localStorage.setItem('wedding_client_user', JSON.stringify(data.data.user));
+        if (data.data.accessToken) {
+          localStorage.setItem('wedding_client_access_token', data.data.accessToken);
+        }
       } catch {}
       return { success: true };
     }
@@ -151,7 +162,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const resetPassword = async (email: string, otp: string, newPassword: string) => {
     try {
-      const { data } = await api.post<ApiResponse<{ user: User; message?: string }>>('/api/auth/reset-password', {
+      const { data } = await api.post<ApiResponse<{ user: User; message?: string; accessToken?: string }>>('/api/auth/reset-password', {
         email,
         otp,
         newPassword,
@@ -161,6 +172,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(data.data.user);
         try {
           localStorage.setItem('wedding_client_user', JSON.stringify(data.data.user));
+          if (data.data.accessToken) {
+            localStorage.setItem('wedding_client_access_token', data.data.accessToken);
+          }
         } catch {}
         return { success: true, message: data.data?.message };
       }
@@ -179,6 +193,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
     try {
       localStorage.removeItem('wedding_client_user');
+      localStorage.removeItem('wedding_client_access_token');
     } catch {}
   };
 
