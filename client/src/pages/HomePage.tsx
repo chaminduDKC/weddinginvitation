@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
-import { Sparkles, Eye, ArrowRight, ShieldCheck, Smartphone, Users, Languages, Check } from 'lucide-react';
+import { Sparkles, Eye, ArrowRight, ShieldCheck, Smartphone, Users, Languages, Check, Clock } from 'lucide-react';
 import { fetchTemplates, fetchUserOrders } from '../lib/api';
 import { CatalogSkeleton } from '../components/SkeletonLoader';
 import { useAuth } from '../lib/auth';
@@ -115,11 +115,12 @@ export const HomePage: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {templates?.map((tpl) => {
-              const isBought =
-                isAuthenticated &&
-                !!userOrders?.some(
-                  (o) => (o.templateId === tpl.id || o.template?.key === tpl.key) && o.status !== 'REJECTED'
-                );
+              const matchingOrders = isAuthenticated
+                ? userOrders?.filter((o) => (o.templateId === tpl.id || o.template?.key === tpl.key)) || []
+                : [];
+              const isApproved = matchingOrders.some((o) => o.status === 'APPROVED');
+              const isPending = !isApproved && matchingOrders.some((o) => o.status === 'PENDING');
+              const isBought = isApproved;
 
               return (
                 <div
@@ -133,15 +134,21 @@ export const HomePage: React.FC = () => {
                       alt={tpl.name}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    {isBought && (
+                    {isApproved && (
                       <div className="absolute top-3 left-3 bg-emerald-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
                         <Check className="h-3 w-3" />
                         <span>Purchased</span>
                       </div>
                     )}
+                    {isPending && (
+                      <div className="absolute top-3 left-3 bg-amber-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        <span>Pending Approval</span>
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent flex items-end p-4">
                       <span className="text-xs font-semibold text-white bg-black/40 px-2.5 py-1 rounded-full">
-                        {isBought ? 'Owned Theme' : `Rs. ${tpl.priceLkr.toLocaleString()}`}
+                        {isApproved ? 'Owned Theme' : isPending ? 'Pending Approval' : `Rs. ${tpl.priceLkr.toLocaleString()}`}
                       </span>
                     </div>
                   </div>
@@ -194,8 +201,17 @@ export const HomePage: React.FC = () => {
                         to={`/customize/${tpl.key}`}
                         className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-semibold shadow-xs transition-colors min-h-[44px]"
                       >
-                        <Sparkles className="h-3.5 w-3.5 text-gold-400" />
-                        <span>{isBought ? 'Customize Details' : 'Customize & Preview'}</span>
+                        {isPending ? (
+                          <>
+                            <Clock className="h-3.5 w-3.5 text-amber-400" />
+                            <span>Pending Approval • Customize</span>
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="h-3.5 w-3.5 text-gold-400" />
+                            <span>{isBought ? 'Customize Details' : 'Customize & Preview'}</span>
+                          </>
+                        )}
                       </Link>
                      
                     </div>

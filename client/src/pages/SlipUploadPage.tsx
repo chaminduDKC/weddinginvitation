@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   UploadCloud,
   CheckCircle2,
@@ -17,6 +17,7 @@ import { compressPaymentSlip, CompressionResult } from '../lib/compress';
 export const SlipUploadPage: React.FC = () => {
   const { templateId } = useParams<{ templateId: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data: template, isLoading: templateLoading } = useQuery({
     queryKey: ['template', templateId],
@@ -72,6 +73,8 @@ export const SlipUploadPage: React.FC = () => {
       await submitOrder(templateId, compressedResult.file, (progress) => {
         setUploadProgress(progress);
       });
+
+      await queryClient.invalidateQueries({ queryKey: ['user-orders'] });
 
       // Also persist the customized invitation details so they appear after admin approval
       if (draftCustomization) {

@@ -8,6 +8,7 @@ import {
   Edit3,
   Check,
   Sparkles,
+  Clock,
 } from 'lucide-react';
 import {
   fetchPublicInvitation,
@@ -97,16 +98,19 @@ export const PreviewPage: React.FC = () => {
       priceLkr: 6000,
     };
 
-  const isAlreadyBought =
-    !isGuestView &&
-    isAuthenticated &&
-    !!userOrders?.some(
-      (o) =>
-        ((matchedTemplate?.id !== 'default' && o.templateId === matchedTemplate?.id) ||
-          o.template?.key === activeKey ||
-          o.templateId === activeKey) &&
-        o.status !== 'REJECTED'
-    );
+  const matchingOrders =
+    !isGuestView && isAuthenticated && userOrders
+      ? userOrders.filter(
+          (o) =>
+            (matchedTemplate?.id !== 'default' && o.templateId === matchedTemplate?.id) ||
+            o.template?.key === activeKey ||
+            o.templateId === activeKey
+        )
+      : [];
+
+  const isApproved = matchingOrders.some((o) => o.status === 'APPROVED');
+  const isPendingApproval = !isApproved && matchingOrders.some((o) => o.status === 'PENDING');
+  const isAlreadyBought = isApproved || isPendingApproval;
 
   // Language management: support couple's choice or guest toggle
   const initialLanguage: 'en' | 'si' =
@@ -325,6 +329,26 @@ export const PreviewPage: React.FC = () => {
           {/* Quick Bilingual Switcher */}
          
 
+          {!isGuestView && isPendingApproval && (
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-amber-500 hover:bg-amber-600 text-obsidian text-xs font-bold shadow-md transition-transform active:scale-95 min-h-[44px]"
+            >
+              <Clock className="h-4 w-4" />
+              <span>Waiting for Admin Approval</span>
+            </Link>
+          )}
+
+          {!isGuestView && isApproved && (
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-slate-900/90 hover:bg-black text-white text-xs font-semibold shadow-md transition-transform active:scale-95 min-h-[44px]"
+            >
+              <Check className="h-4 w-4 text-emerald-400" />
+              <span>Dashboard</span>
+            </Link>
+          )}
+
           {!isGuestView && !isAlreadyBought && (
             <button
               onClick={handleBuyClick}
@@ -333,16 +357,6 @@ export const PreviewPage: React.FC = () => {
               <ShoppingBag className="h-4 w-4" />
               <span>Buy Theme (Rs. {sampleData.priceLkr.toLocaleString()})</span>
             </button>
-          )}
-
-          {!isGuestView && isAlreadyBought && (
-            <Link
-              to="/dashboard"
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-slate-900/90 hover:bg-black text-white text-xs font-semibold shadow-md transition-transform active:scale-95 min-h-[44px]"
-            >
-              <Check className="h-4 w-4 text-emerald-400" />
-              <span>Dashboard</span>
-            </Link>
           )}
 
         </div>

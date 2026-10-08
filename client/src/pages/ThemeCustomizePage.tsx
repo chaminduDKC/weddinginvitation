@@ -125,15 +125,19 @@ export const ThemeCustomizePage: React.FC = () => {
       isActive: true,
     };
 
-  const isAlreadyBought =
-    isAuthenticated &&
-    !!userOrders?.some(
-      (o) =>
-        ((activeTemplate.id !== 'default' && o.templateId === activeTemplate.id) ||
-          o.template?.key === activeTemplate.key ||
-          o.templateId === activeTemplate.key) &&
-        o.status !== 'REJECTED'
-    );
+  const matchingOrders =
+    isAuthenticated && userOrders
+      ? userOrders.filter(
+          (o) =>
+            (activeTemplate.id !== 'default' && o.templateId === activeTemplate.id) ||
+            o.template?.key === activeTemplate.key ||
+            o.templateId === activeTemplate.key
+        )
+      : [];
+
+  const isApproved = matchingOrders.some((o) => o.status === 'APPROVED');
+  const isPendingApproval = !isApproved && matchingOrders.some((o) => o.status === 'PENDING');
+  const isAlreadyBought = isApproved || isPendingApproval;
 
   // Check if we have an existing draft in localStorage
   const existingDraft = (() => {
@@ -507,9 +511,16 @@ export const ThemeCustomizePage: React.FC = () => {
                 <span className="text-[11px] uppercase font-bold text-gold-600 tracking-wider">
                   Selected Theme
                 </span>
-                {isAlreadyBought && (
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                {isApproved && (
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold flex items-center gap-1">
+                    <Check className="h-3 w-3" />
                     Purchased
+                  </span>
+                )}
+                {isPendingApproval && (
+                  <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300 text-[10px] font-bold flex items-center gap-1">
+                    <Clock className="h-3 w-3 text-amber-600" />
+                    Pending Admin Approval
                   </span>
                 )}
               </div>
@@ -517,7 +528,11 @@ export const ThemeCustomizePage: React.FC = () => {
                 {activeTemplate.name}
               </h3>
               <span className="text-xs font-semibold text-slate-700">
-                {isAlreadyBought ? 'Owned Theme' : `Rs. ${activeTemplate.priceLkr.toLocaleString()}`}
+                {isApproved
+                  ? 'Owned Theme'
+                  : isPendingApproval
+                  ? 'Slip Submitted • Waiting for Approval'
+                  : `Rs. ${activeTemplate.priceLkr.toLocaleString()}`}
               </span>
             </div>
           </div>
@@ -1400,7 +1415,23 @@ export const ThemeCustomizePage: React.FC = () => {
               <span>Preview Wedding Invitation</span>
             </button>
 
-            {!isAlreadyBought ? (
+            {isPendingApproval ? (
+              <Link
+                to="/dashboard"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-obsidian text-sm font-bold shadow-sm transition-all active:scale-95 min-h-[48px]"
+              >
+                <Clock className="h-4 w-4" />
+                <span>Waiting for Admin Approval • View Status</span>
+              </Link>
+            ) : isApproved ? (
+              <Link
+                to="/dashboard"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-black text-white text-sm font-bold shadow-sm transition-all active:scale-95 min-h-[48px]"
+              >
+                <Check className="h-4 w-4 text-emerald-400" />
+                <span>Theme Already Bought • Open Dashboard</span>
+              </Link>
+            ) : (
               <button
                 type="button"
                 onClick={handleBuyNow}
@@ -1409,14 +1440,6 @@ export const ThemeCustomizePage: React.FC = () => {
                 <ShoppingBag className="h-4 w-4" />
                 <span>Buy This Theme (Rs. {activeTemplate.priceLkr.toLocaleString()})</span>
               </button>
-            ) : (
-              <Link
-                to="/dashboard"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-slate-900 hover:bg-black text-white text-sm font-bold shadow-sm transition-all active:scale-95 min-h-[48px]"
-              >
-                <Check className="h-4 w-4 text-emerald-400" />
-                <span>Theme Already Bought • Open Dashboard</span>
-              </Link>
             )}
           </div>
         </form>
