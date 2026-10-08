@@ -323,36 +323,7 @@ export const PreviewPage: React.FC = () => {
 
         <div className="flex items-center gap-2 pointer-events-auto">
           {/* Quick Bilingual Switcher */}
-          <div
-            className="flex items-center p-0.5 rounded-full bg-black/70 border border-white/20 shadow-md backdrop-blur-xs min-h-[44px]"
-            role="radiogroup"
-            aria-label="Invitation Language"
-          >
-            <button
-              type="button"
-              onClick={() => setCurrentLang('si')}
-              className={`h-8 px-2.5 rounded-full text-xs font-semibold transition-all ${
-                currentLang === 'si'
-                  ? 'bg-gold-500 text-stone-950 shadow-xs'
-                  : 'text-stone-300 hover:text-white'
-              }`}
-              title="සිංහල භාෂාවෙන් ආරාධනය බලන්න"
-            >
-              සිං
-            </button>
-            <button
-              type="button"
-              onClick={() => setCurrentLang('en')}
-              className={`h-8 px-2.5 rounded-full text-xs font-semibold transition-all ${
-                currentLang === 'en'
-                  ? 'bg-gold-500 text-stone-950 shadow-xs'
-                  : 'text-stone-300 hover:text-white'
-              }`}
-              title="View invitation in English"
-            >
-              EN
-            </button>
-          </div>
+         
 
           {!isGuestView && !isAlreadyBought && (
             <button

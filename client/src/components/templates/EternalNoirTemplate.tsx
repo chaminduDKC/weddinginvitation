@@ -621,9 +621,9 @@ export const EternalNoirTemplate: React.FC<TemplateComponentProps> = ({ data, ha
                 }}
               />
 
-              <div className="flex justify-center pt-1">
+              {/* <div className="flex justify-center pt-1">
                 <ShareButton data={data} className={goldGhost} />
-              </div>
+              </div> */}
             </div>
           </section>
         </Reveal>

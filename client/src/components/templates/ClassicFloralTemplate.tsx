@@ -212,7 +212,7 @@ export const ClassicFloralTemplate: React.FC<TemplateComponentProps> = ({ data, 
                 className={`text-[#2C221E] max-w-xs mx-auto ${isSi ? 'font-serif text-base font-semibold' : 'pk-serif text-xl font-semibold'}`}
               />
 
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2.5">
+              <div className="pt-2 pb-4 flex flex-col sm:flex-row items-center justify-center gap-2.5">
                 {data.mapUrl && (
                   <a
                     href={data.mapUrl}
@@ -304,14 +304,14 @@ export const ClassicFloralTemplate: React.FC<TemplateComponentProps> = ({ data, 
         <Reveal>
           <section className="text-center space-y-4">
             <p className={kicker('font-semibold text-[#B76E79]')}>{i18n.kindlyReply}</p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5">
+            {/* <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5">
               <RsvpButton
                 phone={extra.rsvpPhone}
                 data={data}
                 className={`inline-flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-full bg-gradient-to-r from-[#B76E79] to-[#C5A880] text-white text-xs font-semibold shadow-md transition-transform active:scale-95 min-h-[44px] ${focus}`}
               />
               <ShareButton data={data} className={ghostBtn} />
-            </div>
+            </div> */}
           </section>
         </Reveal>
 

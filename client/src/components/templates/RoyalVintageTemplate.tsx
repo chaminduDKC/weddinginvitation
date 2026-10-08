@@ -395,9 +395,9 @@ export const RoyalVintageTemplate: React.FC<TemplateComponentProps> = ({ data, h
                 label: 'text-[10px] uppercase tracking-widest text-[#800E13] font-bold',
               }}
             />
-            <div className="flex justify-center">
+            {/* <div className="flex justify-center">
               <ShareButton data={data} className={goldGhost} />
-            </div>
+            </div> */}
           </section>
         </Reveal>
 

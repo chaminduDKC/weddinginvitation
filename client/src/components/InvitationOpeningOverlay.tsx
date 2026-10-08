@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Clock, MapPin } from 'lucide-react';
 import {
   formatCoupleNames,
   formatGuestName,
@@ -13,11 +14,36 @@ interface InvitationOpeningOverlayProps {
   brideNameSi?: string | null;
   groomNameSi?: string | null;
   guestNameSi?: string | null;
+  /** Wedding date. Accepts 'YYYY-MM-DD', any ISO string, or a Date. */
+  weddingDate?: string | Date | null;
+  /** Free-text time, e.g. "10:30 AM" or "පෙ.ව. 10.30". Shown exactly as given. */
+  weddingTime?: string | null;
+  venue?: string | null;
+  venueSi?: string | null;
   initialLang?: 'si' | 'en';
   fontStyle?: SinhalaFontKey;
   onLanguageChange?: (lang: 'si' | 'en') => void;
   onOpen: () => void | Promise<void>;
 }
+
+/**
+ * Turns the incoming date value into a local Date.
+ *
+ * 'YYYY-MM-DD' strings are split by hand on purpose: `new Date('2026-12-05')`
+ * is parsed as UTC midnight, so in timezones behind UTC it would display
+ * as the 4th instead of the 5th.
+ */
+const parseWeddingDate = (value?: string | Date | null): Date | null => {
+  if (!value) return null;
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value;
+  }
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+  const date = match
+    ? new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
+    : new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
 
 /**
  * Traditional Sri Lankan Sacred Mandala SVG component
@@ -109,7 +135,7 @@ const MandalaWatermark: React.FC<{ className?: string }> = ({ className = '' }) 
 const LotusCrest: React.FC = () => (
   <svg
     viewBox="0 0 240 120"
-    className="w-36 sm:w-40 h-auto"
+    className="w-28 sm:w-36 h-auto"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
@@ -209,6 +235,10 @@ export const InvitationOpeningOverlay: React.FC<InvitationOpeningOverlayProps> =
   brideNameSi,
   groomNameSi,
   guestNameSi,
+  weddingDate,
+  weddingTime,
+  venue,
+  venueSi,
   initialLang = 'si',
   fontStyle,
   onLanguageChange,
@@ -269,6 +299,26 @@ export const InvitationOpeningOverlay: React.FC<InvitationOpeningOverlayProps> =
     }
     return formatGuestName(guestName, 'en');
   })();
+
+  // Event details (all optional: the card only renders what was provided)
+  const dateInfo = (() => {
+    const date = parseWeddingDate(weddingDate);
+    if (!date) return null;
+    const locale = lang === 'si' ? 'si-LK' : 'en-GB';
+    return {
+      weekday: new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(date),
+      day: date.getDate(),
+      monthYear: new Intl.DateTimeFormat(locale, {
+        month: 'long',
+        year: 'numeric',
+      }).format(date),
+    };
+  })();
+
+  const displayedTime = weddingTime?.trim() || null;
+  const displayedVenue =
+    (lang === 'si' ? venueSi?.trim() || venue?.trim() : venue?.trim()) || null;
+  const hasDetails = Boolean(dateInfo || displayedTime || displayedVenue);
 
   const handleOpenClick = () => {
     if (isOpening) return;
@@ -375,14 +425,14 @@ export const InvitationOpeningOverlay: React.FC<InvitationOpeningOverlayProps> =
         </div>
 
         {/* Center meeting edge gold trim & shadow */}
-        <div
+        {/* <div
           className="absolute top-0 bottom-0 right-0 w-[2px]"
           style={{
             background:
               'linear-gradient(to bottom, rgba(212,145,45,0.15) 0%, rgba(212,145,45,0.85) 50%, rgba(212,145,45,0.15) 100%)',
             boxShadow: '-2px 0 10px rgba(184, 115, 25, 0.25)',
           }}
-        />
+        /> */}
       </div>
 
       {/* 2. RIGHT DOOR / CURTAIN PANEL */}
@@ -439,18 +489,18 @@ export const InvitationOpeningOverlay: React.FC<InvitationOpeningOverlayProps> =
         </div>
 
         {/* Center meeting edge gold trim & shadow */}
-        <div
+        {/* <div
           className="absolute top-0 bottom-0 left-0 w-[2px]"
           style={{
             background:
               'linear-gradient(to bottom, rgba(212,145,45,0.15) 0%, rgba(212,145,45,0.85) 50%, rgba(212,145,45,0.15) 100%)',
             boxShadow: '2px 0 10px rgba(184, 115, 25, 0.25)',
           }}
-        />
+        /> */}
       </div>
 
       {/* 3. VERTICAL CENTER SEAM LATCH LINE */}
-      <div
+      {/* <div
         className={`absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[2px] z-15 pointer-events-none transition-opacity duration-500 ${
           isOpening ? 'opacity-0' : 'opacity-100'
         }`}
@@ -459,135 +509,188 @@ export const InvitationOpeningOverlay: React.FC<InvitationOpeningOverlayProps> =
             'linear-gradient(to bottom, transparent 0%, rgba(212,145,45,0.5) 15%, rgba(212,145,45,0.95) 50%, rgba(212,145,45,0.5) 85%, transparent 100%)',
           boxShadow: '0 0 6px rgba(212, 145, 45, 0.4)',
         }}
-      />
+      /> */}
 
-      {/* 4. CENTER EMBLEM & TYPOGRAPHY CONTENT (Sacred Lotus Crest & Calligraphy) */}
+      {/* 4. CENTER EMBLEM & TYPOGRAPHY CONTENT
+          The outer div is the scroll container (a safety net for short phones),
+          the inner div does the vertical centering. */}
       <div
-        className={`relative z-20 flex flex-col items-center justify-between h-full w-full pointer-events-auto transition-all ${
+        className={`relative z-20 h-full w-full overflow-y-auto overscroll-contain pointer-events-auto transition-all ${
           isOpening
             ? 'opacity-0 scale-95 pointer-events-none -translate-y-4 duration-600 ease-out'
             : 'opacity-100 scale-100 duration-300'
         }`}
       >
-        {/* Top Empty Spacer for System Notch / Safe Area */}
-        <div className="w-full pt-safe min-h-[30px]" />
+        <div className="flex min-h-full w-full flex-col items-center justify-between">
+          {/* Top Empty Spacer for System Notch / Safe Area */}
+          <div className="w-full pt-safe min-h-[30px]" />
 
-        {/* Center Invitation Emblem & Typography */}
-        <main className="relative w-full max-w-sm px-6 flex flex-col items-center text-center space-y-6 my-auto">
-          {/* Golden Lotus Crest */}
-          <div
-            className="anim-lotus-float"
-            style={{
-              filter: 'drop-shadow(0 4px 14px rgba(212, 145, 45, 0.32))',
-            }}
-          >
-            <LotusCrest />
-          </div>
-
-          {/* Invitation Typography */}
-          <div className={`space-y-3 px-2 ${lang === 'si' ? getSinhalaFontClass(fontStyle) : ''}`}>
-            {/* Main Greeting */}
-            <h1
-              className={`text-3xl sm:text-4xl font-semibold tracking-wide text-[#8F4218] ${
-                lang === 'si' ? 'leading-relaxed' : 'font-serif text-2xl sm:text-3xl'
+          {/* Center Invitation Emblem & Typography */}
+          <main className="relative w-full max-w-sm px-6 py-3 flex flex-col items-center text-center space-y-4 my-auto">
+            {/* Traditional blessing line above the crest */}
+            <p
+              className={`text-xs sm:text-sm tracking-wide text-[#B56722] ${
+                lang === 'si' ? `font-sinhala ${getSinhalaFontClass(fontStyle)}` : 'font-serif italic'
               }`}
+            >
+              {lang === 'si'
+                ? 'ත්‍රිවිධ රත්නයේ ශ්‍රී ආශීර්වාදයෙන්'
+                : 'With the blessings of the Triple Gem'}
+            </p>
+
+            {/* Golden Lotus Crest */}
+            <div
+              className="anim-lotus-float"
               style={{
-                textShadow: '0 1px 3px rgba(180, 100, 30, 0.15)',
+                filter: 'drop-shadow(0 4px 14px rgba(212, 145, 45, 0.32))',
               }}
             >
-              {lang === 'si' ? 'සාදර ඇරයුමයි !' : 'You Are Cordially Invited!'}
-            </h1>
+              <LotusCrest />
+            </div>
 
-            {/* Couple Names */}
-            <p
-              className={`font-sinhala text-xl sm:text-2xl font-medium tracking-normal text-[#B56722] ${
-                lang === 'si' ? '' : 'font-serif'
-              }`}
-            >
-              {displayedCouple}
-            </p>
-
-            {/* Guest Name */}
-            <p className="font-sinhala text-sm sm:text-base font-normal text-[#6B5547] tracking-normal pt-1">
-              {displayedGuest}
-            </p>
-          </div>
-
-          {/* Actions: Open Button & Bilingual Switcher */}
-          <div className="w-full pt-4 space-y-4 flex flex-col items-center">
-            {/* Open Button with Breathing Ring */}
-            <div className="relative inline-flex items-center justify-center">
-              <span
-                aria-hidden="true"
-                className="anim-btn-pulse absolute inset-0 rounded-full border-2 border-[#D28227]"
-              />
-
-              <button
-                type="button"
-                onClick={handleOpenClick}
-                disabled={isOpening}
-                className="relative z-10 inline-flex items-center justify-center px-10 py-3 rounded-full text-white font-sinhala text-base sm:text-lg font-semibold tracking-wide shadow-lg transition-transform active:scale-95 hover:brightness-105 min-h-[46px] cursor-pointer"
+            {/* Invitation Typography */}
+            <div className={`space-y-2 px-2 ${lang === 'si' ? getSinhalaFontClass(fontStyle) : ''}`}>
+              {/* Main Greeting */}
+              <h1
+                className={`text-3xl sm:text-4xl font-semibold tracking-wide text-[#8F4218] ${
+                  lang === 'si' ? 'leading-relaxed' : 'font-serif text-2xl sm:text-3xl'
+                }`}
                 style={{
-                  background: 'linear-gradient(135deg, #DF9740 0%, #D07B21 50%, #B8620F 100%)',
-                  boxShadow: '0 8px 24px -2px rgba(208, 123, 33, 0.45)',
+                  textShadow: '0 1px 3px rgba(180, 100, 30, 0.15)',
                 }}
               >
-                {isOpening ? (
-                  <span className="inline-flex items-center gap-2">
-                    <span className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                    <span>{lang === 'si' ? 'විවෘත වෙමින්...' : 'Opening...'}</span>
-                  </span>
-                ) : (
-                  <span>{lang === 'si' ? 'විවෘත කරන්න' : 'Open Invitation'}</span>
+                {lang === 'si' ? 'සාදර ඇරයුමයි !' : 'You Are Cordially Invited!'}
+              </h1>
+
+              {/* Lead-in line so the names read as a sentence */}
+              <p className="font-sinhala text-sm sm:text-base text-[#6B5547] tracking-normal">
+                {lang === 'si'
+                  ? 'විවාහ මංගල්‍යය සඳහා'
+                  : 'to celebrate the wedding of'}
+              </p>
+
+              {/* Couple Names */}
+              <p
+                className={`font-sinhala text-xl sm:text-2xl font-medium tracking-normal text-[#B56722] ${
+                  lang === 'si' ? '' : 'font-serif'
+                }`}
+              >
+                {displayedCouple}
+              </p>
+
+              {/* Guest Name */}
+              <p className="font-sinhala text-sm sm:text-base font-normal text-[#6B5547] tracking-normal pt-1">
+                {displayedGuest}
+              </p>
+            </div>
+
+            {/* Event details card: date, time and venue (only what was provided) */}
+            {hasDetails && (
+              <div
+                className={`w-full rounded-2xl border border-[#D4912D]/25 bg-white/40 px-4 py-3 shadow-[inset_0_0_20px_rgba(212,145,45,0.05)] ${
+                  lang === 'si' ? `font-sinhala ${getSinhalaFontClass(fontStyle)}` : ''
+                }`}
+              >
+                {dateInfo && (
+                  <div className="flex items-center justify-center gap-3">
+                    {/* Left: weekday */}
+                    <span className="flex-1 text-right text-sm sm:text-base font-medium text-[#8F4218]">
+                      {dateInfo.weekday}
+                    </span>
+
+                    {/* Center: big day number with month + year, framed by two gold rules */}
+                    <div className="flex flex-col items-center border-x border-[#D4912D]/40 px-4">
+                      <span className="font-serif text-4xl sm:text-5xl font-semibold leading-none text-[#B56722]">
+                        {dateInfo.day}
+                      </span>
+                      <span className="mt-1 text-xs sm:text-sm text-[#6B5547]">
+                        {dateInfo.monthYear}
+                      </span>
+                    </div>
+
+                    {/* Right: time (empty span keeps the date centered if no time) */}
+                    <span className="flex flex-1 items-center gap-1.5 text-left text-sm sm:text-base font-medium text-[#8F4218]">
+                      {displayedTime && (
+                        <>
+                          <Clock className="h-3.5 w-3.5 shrink-0 text-[#D4912D]" aria-hidden="true" />
+                          <span>{displayedTime}</span>
+                        </>
+                      )}
+                    </span>
+                  </div>
                 )}
-              </button>
+
+                {/* Time on its own line when there is no date to sit beside */}
+                {!dateInfo && displayedTime && (
+                  <p className="flex items-center justify-center gap-1.5 text-sm sm:text-base font-medium text-[#8F4218]">
+                    <Clock className="h-3.5 w-3.5 shrink-0 text-[#D4912D]" aria-hidden="true" />
+                    <span>{displayedTime}</span>
+                  </p>
+                )}
+
+                {displayedVenue && (
+                  <p
+                    className={`flex items-start justify-center gap-1.5 text-sm sm:text-base text-[#6B5547] ${
+                      dateInfo || displayedTime
+                        ? 'mt-3 border-t border-[#D4912D]/25 pt-3'
+                        : ''
+                    }`}
+                  >
+                    <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#D4912D]" aria-hidden="true" />
+                    <span>{displayedVenue}</span>
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Actions: Open Button & Bilingual Switcher */}
+            <div className="w-full pt-1 space-y-2 flex flex-col items-center">
+              {/* Open Button with Breathing Ring */}
+              <div className="relative inline-flex items-center justify-center">
+                <span
+                  aria-hidden="true"
+                  className="anim-btn-pulse absolute inset-0 rounded-full border-2 border-[#D28227]"
+                />
+
+                <button
+                  type="button"
+                  onClick={handleOpenClick}
+                  disabled={isOpening}
+                  className="relative z-10 inline-flex items-center justify-center px-10 py-3 rounded-full text-white font-sinhala text-base sm:text-lg font-semibold tracking-wide shadow-lg transition-transform active:scale-95 hover:brightness-105 min-h-[46px] cursor-pointer"
+                  style={{
+                    background: 'linear-gradient(135deg, #DF9740 0%, #D07B21 50%, #B8620F 100%)',
+                    boxShadow: '0 8px 24px -2px rgba(208, 123, 33, 0.45)',
+                  }}
+                >
+                  {isOpening ? (
+                    <span className="inline-flex items-center gap-2">
+                      <span className="w-4 h-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                      <span>{lang === 'si' ? 'විවෘත වෙමින්...' : 'Opening...'}</span>
+                    </span>
+                  ) : (
+                    <span>{lang === 'si' ? 'විවෘත කරන්න' : 'Open Invitation'}</span>
+                  )}
+                </button>
+              </div>
+
+              {/* Small hint under the button */}
+              <p className="font-sinhala text-xs text-[#6B5547]/70">
+                {lang === 'si'
+                  ? 'ආරාධනා පත්‍රය විවෘත කිරීමට ස්පර්ශ කරන්න'
+                  : 'Tap to open your invitation'}
+              </p>
+
+              {/* Language Switcher Pill (සිං | EN) */}
             </div>
+          </main>
 
-            {/* Language Switcher Pill (සිං | EN) */}
-            <div
-              className="inline-flex items-center gap-1 p-1 rounded-full bg-white/85 border border-[#DEBFA8]/60 shadow-xs"
-              role="radiogroup"
-              aria-label="Language"
-            >
-              {/* Sinhala option */}
-              <button
-                type="button"
-                role="radio"
-                aria-checked={lang === 'si'}
-                onClick={() => handleLangSelect('si')}
-                className={`flex items-center justify-center min-w-[34px] h-7 px-2.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-                  lang === 'si'
-                    ? 'bg-gradient-to-r from-[#DF9740] to-[#C9721D] text-white shadow-xs'
-                    : 'text-[#8A6A52] hover:text-[#5B3E29]'
-                }`}
-              >
-                <span className="font-sinhala text-[13px] leading-none pt-0.5">සිං</span>
-              </button>
-
-              {/* English option */}
-              <button
-                type="button"
-                role="radio"
-                aria-checked={lang === 'en'}
-                onClick={() => handleLangSelect('en')}
-                className={`flex items-center justify-center min-w-[34px] h-7 px-2.5 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer ${
-                  lang === 'en'
-                    ? 'bg-gradient-to-r from-[#DF9740] to-[#C9721D] text-white shadow-xs'
-                    : 'text-[#8A6A52] hover:text-[#5B3E29]'
-                }`}
-              >
-                <span>EN</span>
-              </button>
-            </div>
-          </div>
-        </main>
-
-        {/* Bottom Safe Area Branding */}
-        <footer className="w-full pb-safe py-3 text-center pointer-events-none">
-          <p className="text-[11px] font-sans tracking-widest text-[#B59682]/70 uppercase">
-            invitation.lk
-          </p>
-        </footer>
+          {/* Bottom Safe Area Branding */}
+          <footer className="w-full pb-safe py-3 text-center pointer-events-none">
+            <p className="text-[11px] font-sans tracking-widest text-[#B59682]/70 uppercase">
+              weddinginvitation
+            </p>
+          </footer>
+        </div>
       </div>
     </div>
   );

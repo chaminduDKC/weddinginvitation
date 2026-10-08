@@ -19,7 +19,7 @@ import {
   formatWhatsAppMessage,
   InvitationLanguage,
 } from '../../lib/invitationI18n';
-import { getSinhalaFontClass, getSinhalaFontOption } from '../../lib/fmFontConverter';
+import { getSinhalaFontClass, getSinhalaFontOption, SinhalaFontKey } from '../../lib/fmFontConverter';
 
 export { getSinhalaFontClass, getSinhalaFontOption };
 
@@ -40,7 +40,7 @@ export interface InviteData {
   eventDate: string | number | Date;
   venue: string;
   language?: 'en' | 'si';
-  fontStyle?: 'abhaya' | 'gemunu' | 'noto-serif' | 'noto-sans';
+  fontStyle?: SinhalaFontKey;
 }
 
 /**

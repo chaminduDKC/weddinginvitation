@@ -74,7 +74,15 @@ export interface Invitation {
   venue: string;
   eventDate: string;
   language?: 'en' | 'si';
-  fontStyle?: 'abhaya' | 'gemunu' | 'noto-serif' | 'noto-sans';
+  fontStyle?:
+    | 'abhaya'
+    | 'gemunu'
+    | 'arjuna'
+    | 'bindumathi'
+    | 'emanee'
+    | 'rajantha'
+    | 'noto-serif'
+    | 'noto-sans';
   heroImageUrl?: string | null;
   galleryImages: string[];
   storyText?: string | null;
@@ -105,7 +113,15 @@ export interface PublicInvitation {
   eventDate: string;
   templateKey: string;
   language?: 'en' | 'si';
-  fontStyle?: 'abhaya' | 'gemunu' | 'noto-serif' | 'noto-sans';
+  fontStyle?:
+    | 'abhaya'
+    | 'gemunu'
+    | 'arjuna'
+    | 'bindumathi'
+    | 'emanee'
+    | 'rajantha'
+    | 'noto-serif'
+    | 'noto-sans';
   heroImageUrl: string | null;
   galleryImages: string[];
   storyText: string | null;

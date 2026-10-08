@@ -8,7 +8,15 @@
  *    (for graphic design export, print cards, and Photoshop workflows).
  */
 
-export type SinhalaFontKey = 'abhaya' | 'gemunu' | 'noto-serif' | 'noto-sans';
+export type SinhalaFontKey =
+  | 'abhaya'
+  | 'gemunu'
+  | 'arjuna'
+  | 'bindumathi'
+  | 'emanee'
+  | 'rajantha'
+  | 'noto-serif'
+  | 'noto-sans';
 
 export interface SinhalaFontOption {
   key: SinhalaFontKey;
@@ -22,6 +30,46 @@ export interface SinhalaFontOption {
 }
 
 export const SINHALA_FONTS: SinhalaFontOption[] = [
+  {
+    key: 'bindumathi',
+    name: 'FM Bindumathi x',
+    nameSi: 'ලලිත බින්දුමතී (FM Bindumathi x)',
+    badge: 'Romantic Calligraphy • සුන්දර කැලිග්‍රැෆි',
+    description: 'The quintessential Sri Lankan wedding invitation calligraphy font. Cherished for its pearl-like circular flourishes and romantic elegance.',
+    descriptionSi: 'ශ්‍රී ලංකාවේ මංගල ආරාධනා සඳහා වඩාත් ආදරණීය හා සුප්‍රසිද්ධ ලලිත බින්දුමතී කැලිග්‍රැෆි අකුරු මෝස්තරය.',
+    cssClass: 'font-sinhala-bindumathi',
+    cssFamily: '"FM-Bindumathi x", "FM-Bindumathi", "Fm-Bindumathi", "FMBindumathi", "Noto Serif Sinhala", "Abhaya Libre", cursive, serif',
+  },
+  {
+    key: 'arjuna',
+    name: 'FM Arjuna x',
+    nameSi: 'ප්‍රෞඪ අර්ජුන (FM Arjuna x)',
+    badge: 'Bold Royal Title • තේජාන්විත ශීර්ෂ',
+    description: 'Majestic, bold display typeface with strong geometric royal curves. Renowned for formal proclamations and regal wedding headings.',
+    descriptionSi: 'ප්‍රෞඪ හා තේජාන්විත රාජකීය මංගල උත්සව, ශීර්ෂ පාඨ සහ නාමයන් සඳහා වඩාත් ප්‍රකට අර්ජුන අකුරු මෝස්තරය.',
+    cssClass: 'font-sinhala-arjuna',
+    cssFamily: '"FM-Arjuna x", "FM-Arjuna", "Fm-Arjuna", "FMArjuna", "Gemunu Libre", "Abhaya Libre", serif',
+  },
+  {
+    key: 'emanee',
+    name: 'FM Emanee',
+    nameSi: 'මනහර එමානී (FM Emanee)',
+    badge: 'Delicate Cursive • මනහර සියුම් වක්‍ර',
+    description: 'Flowing, delicate feminine calligraphic typeface with slender curves. Perfect for romantic floral, garden, and pastel wedding themes.',
+    descriptionSi: 'සියුම් මනහර වක්‍ර සහිත අලංකාර කැලිග්‍රැෆික් අකුරු මෝස්තරය. මල් සැරසිලි සහ රොමෑන්ටික් මංගල තේමාවන් සඳහා ඉතා උචිතයි.',
+    cssClass: 'font-sinhala-emanee',
+    cssFamily: '"FM-Emanee", "Fm-Emanee", "FMEmanee", "Abhaya Libre", "Noto Serif Sinhala", cursive, serif',
+  },
+  {
+    key: 'rajantha',
+    name: 'FM Rajantha',
+    nameSi: 'පෞරාණික රාජන්ත (FM Rajantha)',
+    badge: 'Heritage Royal • පෞරාණික උරුමය',
+    description: 'Traditional royal display font with authentic Kandyan artistic heritage and ornate flourishes. Unmatched for traditional Poruwa ceremonies.',
+    descriptionSi: 'උඩරට සාම්ප්‍රදායික හා පෞරාණික රාජකීය උරුමය විදහා දක්වන, පෝරු මස්තකාරූඪ මංගල චාරිත්‍ර සඳහා උචිත රාජන්ත අකුරු මෝස්තරය.',
+    cssClass: 'font-sinhala-rajantha',
+    cssFamily: '"FM-Rajantha", "Fm-Rajantha", "FMRajantha", "Gemunu Libre", "Noto Serif Sinhala", serif',
+  },
   {
     key: 'abhaya',
     name: 'FM Abhaya (Abhaya Libre)',
@@ -328,3 +376,9 @@ export function unicodeToFmAbhaya(text: string): string {
   if (!text) return '';
   return UNICODE_TO_FM_RULES.reduce((acc, rule) => acc.replace(rule.p, rule.r), text);
 }
+
+/**
+ * Standard Unicode to FM converter alias (applicable to FM Abhaya, FM Arjuna, FM Bindumathi, FM Emanee, FM Rajantha).
+ */
+export const unicodeToFm = unicodeToFmAbhaya;
+

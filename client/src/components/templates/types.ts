@@ -13,7 +13,15 @@ export interface WeddingInviteData {
   mapUrl?: string | null;
   templateKey?: string;
   language?: 'en' | 'si';
-  fontStyle?: 'abhaya' | 'gemunu' | 'noto-serif' | 'noto-sans';
+  fontStyle?:
+    | 'abhaya'
+    | 'gemunu'
+    | 'arjuna'
+    | 'bindumathi'
+    | 'emanee'
+    | 'rajantha'
+    | 'noto-serif'
+    | 'noto-sans';
   // Tier-specific extended fields
   dressCode?: string;
   itinerary?: Array<{ time: string; title: string; desc?: string }>;

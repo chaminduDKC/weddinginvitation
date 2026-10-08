@@ -41,19 +41,19 @@ import {
 const PHOTO_PRESETS = [
   {
     label: 'Sunset Beach',
-    url: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=85',
+    url: 'https://images.unsplash.com/photo-1617376431454-8195cf1fd668?auto=format&fit=crop&w=1200&q=85',
   },
   {
     label: 'Classic Ballroom',
-    url: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=85',
+    url: 'https://images.unsplash.com/photo-1608145640433-937abd82a4e1?auto=format&fit=crop&w=1200&q=85',
   },
   {
     label: 'Garden Romance',
-    url: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1200&q=85',
+    url: 'https://images.unsplash.com/photo-1784729249196-90f42f34fa08?auto=format&fit=crop&w=1200&q=85',
   },
   {
     label: 'Modern Minimal',
-    url: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=1200&q=85',
+    url: 'https://images.unsplash.com/photo-1627964464837-6328f5931576?auto=format&fit=crop&w=1200&q=85',
   },
 ];
 
@@ -138,6 +138,7 @@ export const ThemeCustomizePage: React.FC = () => {
   // Check if we have an existing draft in localStorage
   const existingDraft = (() => {
     try {
+      localStorage.removeItem("wedding_preview_customization")
       const saved = localStorage.getItem('wedding_preview_customization');
       return saved ? JSON.parse(saved) : null;
     } catch {
@@ -634,12 +635,13 @@ export const ThemeCustomizePage: React.FC = () => {
                     <span>English Invitation</span>
                   </div>
                   <span className="text-[11px] text-slate-500 block">
-                    Standard English letters with no typing interference
+                    Standard English letters with no typing interference 
                   </span>
                 </div>
               </button>
 
               <button
+              disabled           
                 type="button"
                 onClick={() => handleLanguageChange('si')}
                 className={`flex items-center gap-3 p-3.5 rounded-xl border text-left transition-all ${
@@ -661,21 +663,13 @@ export const ThemeCustomizePage: React.FC = () => {
                     <span className="font-sinhala text-[14px]">සිංහල ආරාධනා පත්‍රය</span>
                   </div>
                   <span className="text-[11px] text-amber-700 font-semibold block">
-                    Singlish to Sinhala auto-convert enabled
+                    Singlish to Sinhala auto-convert enabled <br /> <span className='text-red-500'>(Currently Unavailable)</span>
                   </span>
                 </div>
               </button>
             </div>
 
-            {language === 'si' && (
-              <div className="flex items-start gap-2.5 p-3 rounded-xl bg-amber-100/70 border border-amber-200/80 text-amber-950 text-xs">
-                <Sparkles className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
-                <div className="text-[11px] leading-relaxed">
-                  <span className="font-bold">ස්වයංක්‍රීය සිංග්ලිෂ් පරිවර්තනය සක්‍රියයි (Singlish Auto-Convert Active): </span>
-                  ඔබට ඉංග්‍රීසි අකුරින් සාමාන්‍ය පරිදි ටයිප් කළ හැක (උදා: <code className="bg-white/80 px-1.5 py-0.5 rounded font-mono text-amber-900 font-bold">thisura</code>, <code className="bg-white/80 px-1.5 py-0.5 rounded font-mono text-amber-900 font-bold">dulyana</code>, <code className="bg-white/80 px-1.5 py-0.5 rounded font-mono text-amber-900 font-bold">kamal silva</code>, <code className="bg-white/80 px-1.5 py-0.5 rounded font-mono text-amber-900 font-bold">cinnamon grand</code>). ඔබ Space ඔබන විට හෝ ඊළඟ කොටුවට මාරු වන විට එය ඉබේම සැබෑ සිංහල අකුරට හැරවේ!
-                </div>
-              </div>
-            )}
+            
           </div>
 
           {/* SINHALA TYPOGRAPHY & FM FONT STYLE CHOOSER */}
@@ -768,7 +762,7 @@ export const ThemeCustomizePage: React.FC = () => {
                 >
                   <span className="flex items-center gap-1.5">
                     <FileText className="h-3.5 w-3.5 text-gold-600" />
-                    <span>මුද්‍රිත කාඩ්පත් හෝ Photoshop සඳහා FM අකුරු කේතය (Export for FM-Abhaya Print)</span>
+                    <span>මුද්‍රිත කාඩ්පත් හෝ Photoshop සඳහා FM අකුරු කේතය (Export for FM Fonts Print)</span>
                   </span>
                   <span className="text-[11px] text-amber-700 underline font-normal">
                     {showFmExport ? 'වසන්න (Hide)' : 'පෙන්වන්න (Show)'}
@@ -778,7 +772,7 @@ export const ThemeCustomizePage: React.FC = () => {
                 {showFmExport && (
                   <div className="mt-3 p-3.5 rounded-xl bg-white border border-amber-200/90 space-y-2.5">
                     <div className="text-[11px] text-slate-600 leading-relaxed">
-                      Adobe Photoshop, Illustrator හෝ InDesign මගින් මංගල කාඩ්පත් මුද්‍රණය කිරීමට අවශ්‍ය නම්, පහත FM-Abhaya කේතය කොපි කරගන්න:
+                      Adobe Photoshop, Illustrator හෝ InDesign මගින් මංගල කාඩ්පත් මුද්‍රණය කිරීමට අවශ්‍ය නම්, පහත FM අකුරු කේතය කොපි කරගන්න:
                     </div>
                     <div className="p-2.5 rounded-lg bg-slate-900 text-emerald-400 font-mono text-xs break-all select-all">
                       {unicodeToFmAbhaya(
@@ -787,7 +781,7 @@ export const ThemeCustomizePage: React.FC = () => {
                     </div>
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-[10px] text-slate-400">
-                        Paste into Photoshop with FM-Abhaya / FM-Bindumathi font selected
+                        Paste into Photoshop with FM-Arjuna, FM-Bindumathi, FM-Emanee, FM-Rajantha, or FM-Abhaya font selected
                       </span>
                       <button
                         type="button"
@@ -851,6 +845,7 @@ export const ThemeCustomizePage: React.FC = () => {
             </div>
 
             <SinglishInput
+            
               id="receiverName"
               label="Sample Receiver / Guest Name"
               required
@@ -862,7 +857,7 @@ export const ThemeCustomizePage: React.FC = () => {
             />
 
             {/* OPTIONAL SINHALA CALLIGRAPHY OVERRIDES FOR OPENING UI */}
-            {language !== 'si' && (
+            {language == 'si' && (
               <div className="pt-2">
                 <details className="group rounded-xl border border-slate-200 bg-sand-50/50 p-3.5 transition-colors open:bg-sand-50">
                   <summary className="flex items-center justify-between cursor-pointer list-none text-xs font-semibold text-slate-700">

@@ -57,6 +57,10 @@ export const TropicalBlissTemplate: React.FC<TemplateComponentProps> = ({ data, 
   const groomAt = brideAt + bride.length * NAME_MS + 450;
   const taglineAt = groomAt + groom.length * NAME_MS + 350;
 
+  // Intro seal: the guest name types in right after the groom's name finishes
+  // (same timings the seal's own Typewriters use: 900ms start, 100ms per letter, 400ms gaps)
+  const sealGuestAt = 900 + bride.length * 100 + 400 + groom.length * 100 + 300;
+
   const focus = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C86446] focus-visible:ring-offset-2';
   const ghostBtn = `inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-full border border-[#0C3826]/25 bg-white hover:bg-[#F6F3EC] text-[#0C3826] text-xs font-semibold transition-colors min-h-[44px] ${focus}`;
   const kicker = (c: string) => `${isSi ? 'font-sinhala text-sm' : 'pk-caps text-[10px]'} ${c}`;
@@ -110,9 +114,30 @@ export const TropicalBlissTemplate: React.FC<TemplateComponentProps> = ({ data, 
                   className={isSi ? 'text-3xl font-serif font-bold' : 'pk-script text-6xl'}
                 />
               </h2>
-              <p className={`text-xs text-emerald-200/80 pt-1 ${isSi ? 'font-sinhala text-sm' : ''}`}>
-                {data.guestName ? i18n.preparedForGuest(data.guestName) : i18n.requestPleasureOfCompany}
-              </p>
+
+              {/* GUEST NAME: small label, then the name framed by two thin gold rules.
+                  Falls back to the generic line when there is no guest name. */}
+              {data.guestName ? (
+                <div className="pt-3">
+                  <div className="mx-auto max-w-[15rem] space-y-0.5 border-y border-[#D4A373]/30 py-2.5">
+                    <p className={`text-emerald-200/80 ${isSi ? 'font-sinhala text-xs' : 'text-[11px] italic'}`}>
+                      {isSi ? 'විශේෂයෙන් ඔබට' : 'Specially invited'}
+                    </p>
+                    <Typewriter
+                      as="p"
+                      block
+                      text={data.guestName}
+                      delay={sealGuestAt}
+                      speed={60}
+                      className={`break-words text-[#D4A373] ${isSi ? 'font-sinhala text-lg font-semibold' : 'pk-script-alt text-3xl'}`}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <p className={`text-xs text-emerald-200/80 pt-1 ${isSi ? 'font-sinhala text-sm' : ''}`}>
+                  {i18n.requestPleasureOfCompany}
+                </p>
+              )}
             </div>
 
             <button
@@ -226,7 +251,7 @@ export const TropicalBlissTemplate: React.FC<TemplateComponentProps> = ({ data, 
                 className={`text-[#0C3826] max-w-xs mx-auto ${isSi ? 'font-serif text-base font-semibold' : 'pk-serif text-xl font-semibold'}`}
               />
 
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2.5">
+              <div className="pt-2 pb-4 flex flex-col sm:flex-row items-center justify-center gap-2.5">
                 {data.mapUrl && (
                   <a
                     href={data.mapUrl}
@@ -295,14 +320,14 @@ export const TropicalBlissTemplate: React.FC<TemplateComponentProps> = ({ data, 
         <Reveal>
           <section className="text-center space-y-4">
             <p className={kicker('font-semibold text-[#C86446]')}>{i18n.kindlyReply}</p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5">
+            {/* <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5">
               <RsvpButton
                 phone={extra.rsvpPhone}
                 data={data}
                 className={`inline-flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-full bg-gradient-to-r from-[#D4A373] to-[#C86446] text-white text-xs font-semibold shadow-md transition-transform active:scale-95 min-h-[44px] ${focus}`}
               />
               <ShareButton data={data} className={ghostBtn} />
-            </div>
+            </div> */}
           </section>
         </Reveal>
 

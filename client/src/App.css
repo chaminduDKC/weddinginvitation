@@ -271,8 +271,27 @@ body {
 }
 
 /* ==========================================================================
-   SINHALA TYPOGRAPHY STYLES (FM Abhaya, FM Gemunu, Royal Serif, Modern Sans)
+   SINHALA TYPOGRAPHY STYLES (FM Abhaya, FM Gemunu, FM Arjuna, FM Bindumathi,
+   FM Emanee, FM Rajantha, Royal Serif, Modern Sans)
    ========================================================================== */
+.font-sinhala-bindumathi {
+  font-family: "FM-Bindumathi x", "FM-Bindumathi", "Fm-Bindumathi", "FMBindumathi", "Noto Serif Sinhala", "Abhaya Libre", cursive, serif !important;
+}
+
+.font-sinhala-arjuna {
+  font-family: "FM-Arjuna x", "FM-Arjuna", "Fm-Arjuna", "FMArjuna", "Gemunu Libre", "Abhaya Libre", serif !important;
+  letter-spacing: 0.02em;
+}
+
+.font-sinhala-emanee {
+  font-family: "FM-Emanee", "Fm-Emanee", "FMEmanee", "Abhaya Libre", "Noto Serif Sinhala", cursive, serif !important;
+}
+
+.font-sinhala-rajantha {
+  font-family: "FM-Rajantha", "Fm-Rajantha", "FMRajantha", "Gemunu Libre", "Noto Serif Sinhala", serif !important;
+  letter-spacing: 0.015em;
+}
+
 .font-sinhala-abhaya {
   font-family: "Abhaya Libre", "Noto Serif Sinhala", Georgia, serif !important;
 }
@@ -288,4 +307,5 @@ body {
 .font-sinhala-noto-sans {
   font-family: "Noto Sans Sinhala", -apple-system, sans-serif !important;
 }
+
 
