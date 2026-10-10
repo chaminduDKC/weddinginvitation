@@ -35,7 +35,6 @@ export const HomePage: React.FC = () => {
       <section className="relative overflow-hidden pt-12 pb-16 sm:pt-20 sm:pb-24 border-b border-border bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sand-100 border border-gold-400/30 text-gold-600 text-xs font-semibold">
-            <Sparkles className="h-3.5 w-3.5" />
             Sri Lanka's Modern Wedding Invitation Platform
           </div>
 
@@ -208,7 +207,6 @@ export const HomePage: React.FC = () => {
                           </>
                         ) : (
                           <>
-                            <Sparkles className="h-3.5 w-3.5 text-gold-400" />
                             <span>{isBought ? 'Customize Details' : 'Customize & Preview'}</span>
                           </>
                         )}
@@ -224,7 +222,16 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-white py-8 px-4 text-center text-xs text-slate-400">
+      <footer className="border-t border-border bg-white py-8 px-4 text-center text-xs text-slate-400 space-y-2">
+        <div className="flex items-center justify-center gap-4">
+          <Link to="/contact" className="text-slate-500 hover:text-gold-600 font-medium transition-colors">
+            Contact & Support
+          </Link>
+          <span>•</span>
+          <Link to="/" className="text-slate-500 hover:text-gold-600 font-medium transition-colors">
+            Wedding Templates
+          </Link>
+        </div>
         <p>© {new Date().getFullYear()} WeddingPlatform.lk. Handcrafted for Sri Lankan Weddings.</p>
       </footer>
     </div>

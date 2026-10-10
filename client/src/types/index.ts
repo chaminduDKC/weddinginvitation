@@ -22,6 +22,44 @@ export interface Template {
 
 export type OrderStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
+export interface BankAccount {
+  label?: string;
+  bankName: string;
+  accountNumber: string;
+  accountName?: string;
+  branch?: string;
+}
+
+export interface BankDetails {
+  accounts: BankAccount[];
+  note?: string;
+}
+
+export interface DevelopedBy {
+  name: string;
+  role: string;
+  website?: string;
+  description?: string;
+}
+
+export interface ContactDetails {
+  companyName: string;
+  tagline: string;
+  description: string;
+  phone: string;
+  whatsapp?: string;
+  email: string;
+  address?: string;
+  businessHours?: string;
+  developedBy: DevelopedBy;
+  socialLinks?: {
+    whatsapp?: string;
+    facebook?: string;
+    instagram?: string;
+  };
+  supportNotice?: string;
+}
+
 export interface Order {
   id: string;
   templateId: string;

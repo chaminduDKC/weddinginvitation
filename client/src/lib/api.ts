@@ -9,6 +9,8 @@ import {
   Guest,
   PublicInvitation,
   ApiResponse,
+  BankDetails,
+  ContactDetails,
 } from '../types';
 
 // Templates
@@ -52,6 +54,18 @@ export const submitOrder = async (
 
   if (!data.success) throw new Error(data.error || 'Failed to submit payment slip');
   return data.data!.order;
+};
+
+export const fetchBankDetails = async (): Promise<BankDetails> => {
+  const { data } = await api.get<ApiResponse<BankDetails>>('/api/orders/bank-details');
+  if (!data.success) throw new Error(data.error || 'Failed to fetch bank details');
+  return data.data!;
+};
+
+export const fetchContactDetails = async (): Promise<ContactDetails> => {
+  const { data } = await api.get<ApiResponse<ContactDetails>>('/api/contact-details');
+  if (!data.success) throw new Error(data.error || 'Failed to fetch contact details');
+  return data.data!;
 };
 
 // Invitations (Customizer)

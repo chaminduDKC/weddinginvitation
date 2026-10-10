@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
-  Sparkles,
   Eye,
   Calendar,
   MapPin,
@@ -26,6 +25,7 @@ import {
   Copy,
   FileText,
   RotateCcw,
+  Sparkles,
 } from 'lucide-react';
 import { fetchTemplates, fetchUserOrders } from '../lib/api';
 import { useAuth } from '../lib/auth';
@@ -481,8 +481,7 @@ export const ThemeCustomizePage: React.FC = () => {
         {/* Page Heading */}
         <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sand-100 text-gold-600 text-xs font-semibold">
-            <Sparkles className="h-3.5 w-3.5" />
-            Step 1: Customize Your Wedding Invitation
+            Customize Your Wedding Invitation
           </div>
           <h1 className="text-fluid-h1 font-serif font-bold text-obsidian tracking-tight">
             Invitation Details &amp; Options
@@ -1411,7 +1410,6 @@ export const ThemeCustomizePage: React.FC = () => {
               type="submit"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl bg-slate-900 hover:bg-black text-white text-sm font-bold shadow-md transition-all active:scale-95 min-h-[48px]"
             >
-              <Eye className="h-4 w-4 text-gold-400" />
               <span>Preview Wedding Invitation</span>
             </button>
 

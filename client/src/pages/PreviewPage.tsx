@@ -307,7 +307,6 @@ export const PreviewPage: React.FC = () => {
                   className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-black/70 hover:bg-black text-white border border-white/20 text-xs font-semibold shadow-md transition-transform active:scale-95 min-h-[44px]"
                   title="Preview Opening Screen Animation"
                 >
-                  <Sparkles className="h-4 w-4 text-gold-400" />
                   <span className="hidden sm:inline">Opening Screen</span>
                   <span className="sm:hidden">Cover</span>
                 </button>
@@ -317,7 +316,6 @@ export const PreviewPage: React.FC = () => {
                   to="/dashboard"
                   className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-black/70 hover:bg-black text-white border border-white/20 text-xs font-semibold shadow-md min-h-[44px]"
                 >
-                  <ArrowLeft className="h-4 w-4" />
                   <span>Dashboard</span>
                 </Link>
               )}

@@ -52,6 +52,15 @@ export const Navbar: React.FC = () => {
               Templates
             </Link>
 
+            <Link
+              to="/contact"
+              className={`text-sm font-medium transition-colors min-h-[44px] inline-flex items-center ${
+                isCurrent('/contact') ? 'text-gold-600 font-semibold' : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Contact
+            </Link>
+
             {isAuthenticated ? (
               <>
                 <Link
@@ -152,6 +161,14 @@ export const Navbar: React.FC = () => {
             className="flex items-center px-3 py-2.5 rounded-xl text-sm font-medium text-slate-800 hover:bg-sand-100 min-h-[44px]"
           >
             Explore Templates
+          </Link>
+
+          <Link
+            to="/contact"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center px-3 py-2.5 rounded-xl text-sm font-medium text-slate-800 hover:bg-sand-100 min-h-[44px]"
+          >
+            Contact Details
           </Link>
 
           {isAuthenticated ? (

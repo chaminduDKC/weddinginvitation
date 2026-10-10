@@ -14,6 +14,7 @@ import orderRoutes from "./modules/orders/orders.routes.js";
 import adminRoutes from "./modules/admin/admin.routes.js";
 import guestRoutes from "./modules/guests/guests.routes.js";
 import publicRoutes from "./modules/public/public.routes.js";
+import { getContactDetails } from "./modules/public/public.controller.js";
 
 export const createApp = (): Express => {
   const app = express();
@@ -76,6 +77,7 @@ export const createApp = (): Express => {
   app.use("/api/admin", adminRoutes);
   app.use("/api/guests", guestRoutes);
   app.use("/api/public", publicRoutes);
+  app.get("/api/contact-details", getContactDetails);
 
   // 404 Handler
   app.use(notFoundHandler);

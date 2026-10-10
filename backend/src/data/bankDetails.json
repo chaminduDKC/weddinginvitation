@@ -1,0 +1,12 @@
+{
+  "accounts": [
+    {
+      "label": "Primary Bank",
+      "bankName": "Bank of Ceylon",
+      "accountNumber": "83562296",
+      "accountName": "L C D Karunarathne",
+      "branch": "Matara Branch"
+    }
+  ],
+  "note": "Reference : Wedding Invitation.lk"
+}

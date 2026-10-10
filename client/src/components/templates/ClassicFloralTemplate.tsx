@@ -134,7 +134,7 @@ export const ClassicFloralTemplate: React.FC<TemplateComponentProps> = ({ data, 
           <Rise active={hasOpened} delay={100}>
             <div className={`inline-flex items-center gap-2 text-[#B76E79] ${isSi ? 'font-sinhala text-xs' : 'pk-caps text-[10px]'}`}>
               <Flower2 className="h-3.5 w-3.5" />
-              <span>{isSi ? 'මංගල සැමරුම' : 'Nuptial Celebration'}</span>
+              <span>{isSi ? 'මංගල සැමරුම' : 'Together with their families'}</span>
               <Flower2 className="h-3.5 w-3.5" />
             </div>
           </Rise>

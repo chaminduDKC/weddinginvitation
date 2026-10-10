@@ -1,0 +1,19 @@
+{
+  "accounts": [
+    {
+      "label": "Primary Bank",
+      "bankName": "Commercial Bank of Ceylon",
+      "accountNumber": "8004523910",
+      "accountName": "Wedding Platform LK (Pvt) Ltd",
+      "branch": "Colombo Main Branch"
+    },
+    {
+      "label": "Alternative Bank",
+      "bankName": "Sampath Bank PLC",
+      "accountNumber": "014510009871",
+      "accountName": "Wedding Platform LK (Pvt) Ltd",
+      "branch": "Colombo Super Branch"
+    }
+  ],
+  "note": "Please ensure your transfer reference or transaction receipt clearly states your registered phone number or email address."
+}

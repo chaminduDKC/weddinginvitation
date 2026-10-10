@@ -71,7 +71,6 @@ export const TropicalBlissTemplate: React.FC<TemplateComponentProps> = ({ data, 
         isSi ? getSinhalaFontClass(data.fontStyle) : 'pk-body'
       }`}
     >
-      <TemplateStyles />
       <PremiumStyles />
       <ScrollProgress className="bg-gradient-to-r from-[#0C3826] via-[#D4A373] to-[#C86446]" />
       {hasOpened && <FallingParticles kind="leaf" count={8} />}
@@ -161,7 +160,7 @@ export const TropicalBlissTemplate: React.FC<TemplateComponentProps> = ({ data, 
           <Rise active={hasOpened} delay={100}>
             <div className={`inline-flex items-center gap-2 text-[#C86446] ${isSi ? 'font-sinhala text-xs' : 'pk-caps text-[10px]'}`}>
               <Palmtree className="h-3.5 w-3.5" />
-              <span>{isSi ? 'මංගල සැමරුම' : 'Destination Nuptials'}</span>
+              <span>{isSi ? 'මංගල සැමරුම' : 'Together with their families'}</span>
               <Palmtree className="h-3.5 w-3.5" />
             </div>
           </Rise>
@@ -227,7 +226,7 @@ export const TropicalBlissTemplate: React.FC<TemplateComponentProps> = ({ data, 
           <section className="bg-white rounded-3xl p-8 sm:p-10 border border-[#D4A373]/30 shadow-sm text-center space-y-6 relative overflow-hidden">
             <GoldFrame inset={10} />
             <div className="space-y-1">
-              <span className={kicker('font-semibold text-[#C86446] block')}>{isSi ? 'සාදර ඇරයුමයි' : 'Island Celebration'}</span>
+              <span className={kicker('font-semibold text-[#C86446] block')}>{isSi ? 'සාදර ඇරයුමයි' : 'Lovely Invitation'}</span>
               <h2 className={`text-[#0C3826] ${isSi ? 'font-sinhala text-2xl sm:text-3xl font-bold' : 'pk-script text-5xl'}`}>{i18n.sunsetReception}</h2>
             </div>
 

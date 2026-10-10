@@ -164,7 +164,7 @@ export const RoyalVintageTemplate: React.FC<TemplateComponentProps> = ({ data, h
           <Rise active={hasOpened} delay={100}>
             <div className={`relative inline-flex items-center gap-2 text-[#D4AF37] ${isSi ? 'font-sinhala text-xs' : 'pk-caps text-[10px]'}`}>
               <Crown className="h-4 w-4" />
-              <span>{isSi ? 'මංගල ප්‍රකාශනය' : 'Grand Nuptials'}</span>
+              <span>{isSi ? 'මංගල ප්‍රකාශනය' : 'Together with their families'}</span>
               <Crown className="h-4 w-4" />
             </div>
           </Rise>

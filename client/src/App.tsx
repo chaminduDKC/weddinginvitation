@@ -11,6 +11,7 @@ import { GuestListPage } from './pages/GuestListPage';
 import { PreviewPage } from './pages/PreviewPage';
 import { ThemeCustomizePage } from './pages/ThemeCustomizePage';
 import { AdminPage } from './pages/AdminPage';
+import { ContactPage } from './pages/ContactPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 // Automatically scrolls window to top on route change
@@ -43,6 +44,7 @@ export const App: React.FC = () => {
         <Routes>
           {/* Public Visitor Routes */}
           <Route path="/" element={<HomePage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<LoginPage initialForgotMode={true} />} />
           <Route path="/register" element={<RegisterPage />} />

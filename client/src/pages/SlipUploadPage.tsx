@@ -11,7 +11,7 @@ import {
   Camera,
   Image as ImageIcon,
 } from 'lucide-react';
-import { fetchTemplate, submitOrder, saveInvitation } from '../lib/api';
+import { fetchTemplate, submitOrder, saveInvitation, fetchBankDetails } from '../lib/api';
 import { compressPaymentSlip, CompressionResult } from '../lib/compress';
 
 export const SlipUploadPage: React.FC = () => {
@@ -23,6 +23,11 @@ export const SlipUploadPage: React.FC = () => {
     queryKey: ['template', templateId],
     queryFn: () => fetchTemplate(templateId!),
     enabled: !!templateId,
+  });
+
+  const { data: bankDetails, isLoading: bankDetailsLoading } = useQuery({
+    queryKey: ['bank-details'],
+    queryFn: fetchBankDetails,
   });
 
   const [compressing, setCompressing] = useState(false);
@@ -140,28 +145,7 @@ export const SlipUploadPage: React.FC = () => {
           </div>
         )}
 
-        {/* Invitation Customization Summary Card */}
-        {draftCustomization && (
-          <div className="bg-sand-100/70 p-4 rounded-2xl border border-gold-400/30 flex items-center justify-between text-xs">
-            <div>
-              <span className="text-[11px] font-bold uppercase text-gold-600 tracking-wider">
-                Invitation Customization
-              </span>
-              <p className="font-serif font-bold text-obsidian text-sm mt-0.5">
-                {draftCustomization.brideName} & {draftCustomization.groomName}
-              </p>
-              <p className="text-slate-500 text-[11px] mt-0.5">
-                {draftCustomization.venue} • {new Date(draftCustomization.eventDate).toLocaleDateString()}
-              </p>
-            </div>
-            <Link
-              to={`/customize/${template?.key || 'eternal-noir'}`}
-              className="px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 text-xs font-semibold hover:bg-slate-50 min-h-[36px] flex items-center"
-            >
-              Edit Details
-            </Link>
-          </div>
-        )}
+       
 
         {/* Bank Account Instructions */}
         <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
@@ -171,31 +155,46 @@ export const SlipUploadPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-            <div className="p-3 bg-sand-50 rounded-xl border border-slate-100">
-              <span className="text-[11px] text-slate-400 font-medium">Bank Name</span>
-              <p className="font-semibold text-obsidian mt-0.5">Commercial Bank of Ceylon</p>
-              <span className="text-[11px] text-slate-400 font-medium block mt-2">Account Number</span>
-              <p className="font-mono font-bold text-obsidian text-sm">8004523910</p>
-              <span className="text-[11px] text-slate-400 font-medium block mt-2">Account Name</span>
-              <p className="font-semibold text-obsidian">Wedding Platform LK (Pvt) Ltd</p>
-            </div>
-
-            <div className="p-3 bg-sand-50 rounded-xl border border-slate-100">
-              <span className="text-[11px] text-slate-400 font-medium">Alternative Bank</span>
-              <p className="font-semibold text-obsidian mt-0.5">Sampath Bank PLC</p>
-              <span className="text-[11px] text-slate-400 font-medium block mt-2">Account Number</span>
-              <p className="font-mono font-bold text-obsidian text-sm">014510009871</p>
-              <span className="text-[11px] text-slate-400 font-medium block mt-2">Branch</span>
-              <p className="font-semibold text-obsidian">Colombo Super Branch</p>
-            </div>
+            {bankDetails?.accounts && bankDetails.accounts.length > 0 ? (
+              bankDetails.accounts.map((acc, idx) => (
+                <div key={idx} className="p-3 bg-sand-50 rounded-xl border border-slate-100">
+                  <span className="text-[11px] text-slate-400 font-medium">
+                    {acc.label || (idx === 0 ? 'Primary Bank' : 'Alternative Bank')}
+                  </span>
+                  <p className="font-semibold text-obsidian mt-0.5">{acc.bankName}</p>
+                  <span className="text-[11px] text-slate-400 font-medium block mt-2">Account Number</span>
+                  <p className="font-mono font-bold text-obsidian text-sm">{acc.accountNumber}</p>
+                  {acc.accountName && (
+                    <>
+                      <span className="text-[11px] text-slate-400 font-medium block mt-2">Account Name</span>
+                      <p className="font-semibold text-obsidian">{acc.accountName}</p>
+                    </>
+                  )}
+                  {acc.branch && (
+                    <>
+                      <span className="text-[11px] text-slate-400 font-medium block mt-2">Branch</span>
+                      <p className="font-semibold text-obsidian">{acc.branch}</p>
+                    </>
+                  )}
+                </div>
+              ))
+            ) : bankDetailsLoading ? (
+              <div className="col-span-full py-4 text-center text-xs text-slate-400 animate-pulse">
+                Loading bank transfer details...
+              </div>
+            ) : (
+              <div className="col-span-full py-4 text-center text-xs text-slate-400">
+                No bank accounts available at this time.
+              </div>
+            )}
           </div>
 
-          <div className="p-3 bg-amber-50/70 border border-amber-200/70 rounded-xl text-[11px] text-amber-800 flex items-start gap-2">
-            <AlertCircle className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
-            <span>
-              Please ensure your transfer reference or transaction receipt clearly states your registered phone number or email address.
-            </span>
-          </div>
+          {bankDetails?.note && (
+            <div className="p-3 bg-amber-50/70 border border-amber-200/70 rounded-xl text-[11px] text-amber-800 flex items-start gap-2">
+              <AlertCircle className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
+              <span>{bankDetails.note}</span>
+            </div>
+          )}
         </div>
 
         {/* Upload Form Card */}

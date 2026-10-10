@@ -1,0 +1,22 @@
+{
+  "companyName": "WeddingInvitation.lk",
+  "tagline": "Sri Lanka's Luxury Digital Wedding Invitation Platform",
+  "description": "We craft unforgettable, elegant digital wedding invitations and seamless guest RSVP management experiences tailored for modern Sri Lankan celebrations.",
+  "phone": "+94 74 123 6410",
+  "whatsapp": "+94741236410",
+  "email": "support@weddinginvitation.lk",
+  "address": "Matara, Sri Lanka",
+  "businessHours": "Always",
+  "developedBy": {
+    "name": "CODELOOM",
+    "role": "Full Stack Engineering",
+    "website": "https://weddingplatform.lk",
+    "description": "Engineered with modern React, Tailwind CSS, TypeScript, and secure Node.js infrastructure for high-performance wedding invitations."
+  },
+  "socialLinks": {
+    "whatsapp": "https://wa.me/94741236410",
+    "facebook": "https://facebook.com",
+    "instagram": "https://instagram.com"
+  },
+  "supportNotice": "Have a custom design inquiry, question about bank transfer approval, or need assistance setting up guest SMS/WhatsApp invites? Our concierge support is here to help."
+}

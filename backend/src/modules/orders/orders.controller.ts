@@ -3,6 +3,7 @@ import { prisma } from "../../lib/prisma.js";
 import { sendSuccess, sendError } from "../../lib/response.js";
 import { uploadSlipToCloudinary } from "../../lib/cloudinary.js";
 import { OrderStatus } from "@prisma/client";
+import { getBankDetailsData } from "../../lib/bankDetails.js";
 
 /**
  * Fetch all orders placed by the authenticated couple.
@@ -187,3 +188,20 @@ export const getOrderStatusForTemplate = async (
     next(error);
   }
 };
+
+/**
+ * Fetch bank transfer account details loaded from the backend JSON file.
+ */
+export const getBankDetails = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const bankDetails = getBankDetailsData();
+    sendSuccess(res, bankDetails);
+  } catch (error) {
+    next(error);
+  }
+};
+

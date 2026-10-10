@@ -3,13 +3,17 @@ import {
   getUserOrders,
   createOrder,
   getOrderStatusForTemplate,
+  getBankDetails,
 } from "./orders.controller.js";
 import { requireAuth } from "../../middleware/auth.js";
 import { uploadSlipMiddleware } from "../../middleware/upload.js";
 
 const router = Router();
 
-// All order routes require authentication
+// Bank details endpoint (accessible publicly or authenticated)
+router.get("/bank-details", getBankDetails);
+
+// All protected order routes require authentication
 router.use(requireAuth);
 
 router.get("/", getUserOrders);

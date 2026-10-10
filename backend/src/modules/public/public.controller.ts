@@ -3,6 +3,7 @@ import { OrderStatus } from "@prisma/client";
 import { prisma } from "../../lib/prisma.js";
 import { sendSuccess, sendError } from "../../lib/response.js";
 import { verifyAccessToken } from "../../lib/jwt.js";
+import { getContactDetailsData } from "../../lib/contactDetails.js";
 
 /**
  * Public Invitation Endpoint.
@@ -196,3 +197,20 @@ export const getPublicInvitation = async (
     next(error);
   }
 };
+
+/**
+ * Fetch contact details loaded from backend JSON data file.
+ */
+export const getContactDetails = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const contactDetails = getContactDetailsData();
+    sendSuccess(res, contactDetails);
+  } catch (error) {
+    next(error);
+  }
+};
+
