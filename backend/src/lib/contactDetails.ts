@@ -27,22 +27,22 @@ export interface ContactDetails {
 }
 
 const DEFAULT_CONTACT_DETAILS: ContactDetails = {
-  companyName: "WeddingPlatform.lk",
+  companyName: "WeddingInvitation",
   tagline: "Sri Lanka's Luxury Digital Wedding Invitation Platform",
   description: "We craft unforgettable, elegant digital wedding invitations and seamless guest RSVP management experiences tailored for modern Sri Lankan celebrations.",
-  phone: "+94 77 123 4567",
-  whatsapp: "+94 77 123 4567",
-  email: "support@weddingplatform.lk",
-  address: "Colombo, Sri Lanka",
-  businessHours: "Monday – Saturday: 9:00 AM – 7:00 PM (IST)",
+  phone: "+94 74 123 410",
+  whatsapp: "+9474 123 6410",
+  email: "support@weddinginvitation.lk",
+  address: "Matara, Sri Lanka",
+  businessHours: "Always",
   developedBy: {
-    name: "Chamindu & Team",
-    role: "Lead Architect & Full Stack Engineering",
+    name: "CODELOOM",
+    role: "Full Stack Engineering",
     website: "https://weddingplatform.lk",
     description: "Engineered with modern React, Tailwind CSS, TypeScript, and secure Node.js infrastructure for high-performance wedding invitations.",
   },
   socialLinks: {
-    whatsapp: "https://wa.me/94771234567",
+    whatsapp: "https://wa.me/94741236410",
     facebook: "https://facebook.com",
     instagram: "https://instagram.com",
   },
